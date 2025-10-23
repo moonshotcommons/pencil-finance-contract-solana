@@ -110,65 +110,65 @@ anchor test
 
 #### Quick Deployment (Recommended)
 
-使用自动化部署脚本（等效于 EVM 版本的 `deployToEDUChain.js`）：
+Use the automated deployment script (equivalent to the EVM version's `deployToEDUChain.js`):
 
 ```bash
-# 0. 配置网络（首次部署需要）
+# 0. Configure network (required for first deployment)
 solana config set --url devnet
-# 如果余额不足，申请空投
+# Request airdrop if balance is insufficient
 solana airdrop 2
 
-# 1. 构建程序
+# 1. Build the program
 anchor build
 
-# 2. 部署程序到 Devnet
+# 2. Deploy program to Devnet
 anchor deploy --provider.cluster devnet
 
-# 3. 运行初始化脚本（初始化 SystemConfig、创建示例资产池等）
-# 注意：确保 Anchor.toml 中的 cluster 设置为 "devnet"
+# 3. Run initialization script (initialize SystemConfig, create sample asset pools, etc.)
+# Note: Ensure cluster is set to "devnet" in Anchor.toml
 anchor run deploy
 
-# 4. 查看配置
+# 4. View configuration
 anchor run configure
 ```
 
-部署完成后会生成 `deployment-solana.json` 文件，包含所有部署的账户地址和配置信息。
+After deployment is complete, a `deployment-solana.json` file will be generated containing all deployed account addresses and configuration information.
 
-**重要提示：**
-- 步骤 3 和 4 会自动使用 `Anchor.toml` 中配置的网络
-- 确保 `Anchor.toml` 中的 `[provider]` 部分设置正确：
+**Important Notes:**
+- Steps 3 and 4 will automatically use the network configured in `Anchor.toml`
+- Ensure the `[provider]` section in `Anchor.toml` is configured correctly:
   ```toml
   [provider]
-  cluster = "Devnet"  # 或 "Testnet" / "Mainnet"
+  cluster = "Devnet"  # or "Testnet" / "Mainnet"
   wallet = "~/.config/solana/id.json"
   ```
 
-#### 手动部署
+#### Manual Deployment
 
-1. 配置 Solana 网络：
+1. Configure Solana network:
 ```bash
 solana config set --url devnet
-solana airdrop 2  # 获取测试 SOL
+solana airdrop 2  # Get test SOL
 ```
 
-2. 配置 `Anchor.toml`：
+2. Configure `Anchor.toml`:
 ```toml
 [provider]
 cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 ```
 
-3. 部署程序：
+3. Deploy the program:
 ```bash
 anchor deploy --provider.cluster devnet
 ```
 
-4. 运行初始化脚本：
+4. Run initialization script:
 ```bash
 ts-node scripts/deploy.ts
 ```
 
-详细部署说明请参考 [scripts/README.md](scripts/README.md)
+For detailed deployment instructions, please refer to [scripts/README.md](scripts/README.md)
 
 ## Program ID
 
