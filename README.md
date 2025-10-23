@@ -12,7 +12,7 @@ Pencil Solana is a DeFi protocol that implements a structured finance model with
 
 - **System Configuration Management**: Centralized system-wide parameter configuration with multi-level admin roles
 - **Asset Pool Creation**: Create and manage asset pools with customizable parameters
-- **Dual Tranche Structure**: 
+- **Dual Tranche Structure**:
   - **Senior Tranche**: Priority returns with fixed interest rates and lower risk
   - **Junior Tranche**: First-loss protection with higher potential returns
 - **Fundraising Mechanism**: Subscribe to senior or junior tranches during funding periods
@@ -27,7 +27,7 @@ Pencil Solana is a DeFi protocol that implements a structured finance model with
 1. **System Config**: Global protocol parameters and admin management
 2. **Asset Pools**: Individual structured finance products with specific terms
 3. **Funding Accounts**: Handle subscription and fundraising logic
-4. **Pools**: 
+4. **Pools**:
    - Senior Pool (GROW token holders)
    - First Loss Pool (Junior NFT holders)
    - Junior Interest Pool (profit distribution)
@@ -108,11 +108,67 @@ anchor test
 
 ### Deployment
 
-1. Configure your Solana cluster in `Anchor.toml`
-2. Deploy to devnet/mainnet:
+#### Quick Deployment (Recommended)
+
+使用自动化部署脚本（等效于 EVM 版本的 `deployToEDUChain.js`）：
+
+```bash
+# 0. 配置网络（首次部署需要）
+solana config set --url devnet
+# 如果余额不足，申请空投
+solana airdrop 2
+
+# 1. 构建程序
+anchor build
+
+# 2. 部署程序到 Devnet
+anchor deploy --provider.cluster devnet
+
+# 3. 运行初始化脚本（初始化 SystemConfig、创建示例资产池等）
+# 注意：确保 Anchor.toml 中的 cluster 设置为 "devnet"
+anchor run deploy
+
+# 4. 查看配置
+anchor run configure
+```
+
+部署完成后会生成 `deployment-solana.json` 文件，包含所有部署的账户地址和配置信息。
+
+**重要提示：**
+- 步骤 3 和 4 会自动使用 `Anchor.toml` 中配置的网络
+- 确保 `Anchor.toml` 中的 `[provider]` 部分设置正确：
+  ```toml
+  [provider]
+  cluster = "Devnet"  # 或 "Testnet" / "Mainnet"
+  wallet = "~/.config/solana/id.json"
+  ```
+
+#### 手动部署
+
+1. 配置 Solana 网络：
+```bash
+solana config set --url devnet
+solana airdrop 2  # 获取测试 SOL
+```
+
+2. 配置 `Anchor.toml`：
+```toml
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/id.json"
+```
+
+3. 部署程序：
 ```bash
 anchor deploy --provider.cluster devnet
 ```
+
+4. 运行初始化脚本：
+```bash
+ts-node scripts/deploy.ts
+```
+
+详细部署说明请参考 [scripts/README.md](scripts/README.md)
 
 ## Program ID
 
@@ -167,9 +223,14 @@ pencil-solana/
 │               ├── funding.rs
 │               ├── repayment.rs
 │               └── tokens.rs
+├── scripts/                        # Deployment and configuration scripts
+│   ├── deploy.ts                   # Main deployment script
+│   ├── configure.ts                # Configuration management
+│   └── README.md                   # Scripts documentation
 ├── tests/                          # Integration tests
+├── docs/                           # Documentation
 ├── app/                            # Frontend application
-└── migrations/                     # Deployment scripts
+└── migrations/                     # Anchor migrations
 ```
 
 ### Adding New Features
