@@ -69,8 +69,12 @@ pub mod pencil_solana {
         )
     }
 
-    pub fn approve_asset_pool(ctx: Context<ApproveAssetPool>, creator: Pubkey) -> Result<()> {
-        instructions::approve_asset_pool(ctx, creator)
+    pub fn approve_asset_pool(
+        ctx: Context<ApproveAssetPool>,
+        creator: Pubkey,
+        name: String,
+    ) -> Result<()> {
+        instructions::approve_asset_pool(ctx, creator, name)
     }
 
     // ==================== Funding ====================

@@ -12,8 +12,8 @@ pencil_solana = "RXo7Ai9ugeBp9giAKqera2pg1xMj49exA5SgWdMBMuM"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "devnet"
+wallet = "./wallet.json"
 
 [scripts]
 test = "bun run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

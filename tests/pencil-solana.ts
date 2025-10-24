@@ -53,9 +53,11 @@ describe("pencil-solana", () => {
   });
 
   describe("Asset Pool", () => {
+    const assetPoolName = "Test Asset Pool";
+
     it("Creates an asset pool", async () => {
       [assetPoolPda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("asset_pool"), payer.publicKey.toBuffer()],
+        [Buffer.from("asset_pool"), payer.publicKey.toBuffer(), Buffer.from(assetPoolName)],
         program.programId
       );
 
@@ -65,7 +67,7 @@ describe("pencil-solana", () => {
 
       const tx = await program.methods
         .createAssetPool(
-          "Test Asset Pool",
+          assetPoolName,
           500,
           100,
           200,
@@ -89,14 +91,14 @@ describe("pencil-solana", () => {
       console.log("✅ Asset pool created:", tx);
 
       const assetPool = await program.account.assetPool.fetch(assetPoolPda);
-      assert.equal(assetPool.name, "Test Asset Pool");
+      assert.equal(assetPool.name, assetPoolName);
       assert.equal(assetPool.creator.toString(), payer.publicKey.toString());
       assert.equal(assetPool.status, 0);
     });
 
     it("Approves an asset pool", async () => {
       const tx = await program.methods
-        .approveAssetPool(payer.publicKey)
+        .approveAssetPool(payer.publicKey, assetPoolName)
         .rpc();
 
       console.log("✅ Asset pool approved:", tx);

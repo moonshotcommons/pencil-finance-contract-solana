@@ -1,7 +1,7 @@
-use anchor_lang::prelude::*;
-use crate::state::{AssetPool, SystemConfig};
-use crate::errors::PencilError;
 use crate::constants::*;
+use crate::errors::PencilError;
+use crate::state::{AssetPool, SystemConfig};
+use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
 #[instruction(name: String)]
@@ -19,7 +19,7 @@ pub struct CreateAssetPool<'info> {
         init,
         payer = payer,
         space = 8 + std::mem::size_of::<AssetPool>() + 64,
-        seeds = [seeds::ASSET_POOL, payer.key().as_ref()],
+        seeds = [seeds::ASSET_POOL, payer.key().as_ref(), name.as_bytes()],
         bump
     )]
     pub asset_pool: Account<'info, AssetPool>,
@@ -48,8 +48,14 @@ pub fn create_asset_pool(
     funding_end_time: i64,
 ) -> Result<()> {
     // 验证参数
-    require!(!name.is_empty() && name.len() <= 64, PencilError::InvalidStringLength);
-    require!(platform_fee <= MAX_PLATFORM_FEE, PencilError::InvalidPlatformFee);
+    require!(
+        !name.is_empty() && name.len() <= 64,
+        PencilError::InvalidStringLength
+    );
+    require!(
+        platform_fee <= MAX_PLATFORM_FEE,
+        PencilError::InvalidPlatformFee
+    );
     require!(
         senior_early_before_exit_fee <= MAX_EARLY_EXIT_FEE,
         PencilError::InvalidEarlyExitFee
@@ -83,7 +89,10 @@ pub fn create_asset_pool(
         PencilError::InvalidRepaymentCount
     );
     require!(total_amount > 0, PencilError::InvalidFundingParams);
-    require!(min_amount > 0 && min_amount <= total_amount, PencilError::InvalidFundingParams);
+    require!(
+        min_amount > 0 && min_amount <= total_amount,
+        PencilError::InvalidFundingParams
+    );
     require!(
         funding_start_time > 0 && funding_end_time > funding_start_time,
         PencilError::InvalidTimeParameters
@@ -123,7 +132,7 @@ pub fn create_asset_pool(
 }
 
 #[derive(Accounts)]
-#[instruction(creator: Pubkey)]
+#[instruction(creator: Pubkey, name: String)]
 pub struct ApproveAssetPool<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
@@ -137,13 +146,17 @@ pub struct ApproveAssetPool<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, creator.as_ref()],
+        seeds = [seeds::ASSET_POOL, creator.as_ref(), name.as_bytes()],
         bump
     )]
     pub asset_pool: Account<'info, AssetPool>,
 }
 
-pub fn approve_asset_pool(ctx: Context<ApproveAssetPool>, _creator: Pubkey) -> Result<()> {
+pub fn approve_asset_pool(
+    ctx: Context<ApproveAssetPool>,
+    _creator: Pubkey,
+    _name: String,
+) -> Result<()> {
     let asset_pool = &mut ctx.accounts.asset_pool;
 
     require!(
@@ -157,4 +170,3 @@ pub fn approve_asset_pool(ctx: Context<ApproveAssetPool>, _creator: Pubkey) -> R
 
     Ok(())
 }
-

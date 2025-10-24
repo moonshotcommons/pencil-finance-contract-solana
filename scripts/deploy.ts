@@ -271,8 +271,9 @@ async function main() {
     const assetAddress = Keypair.generate();
     deployedAccounts.assetAddress = assetAddress.publicKey.toString();
 
+    const assetPoolName = "Demo Asset Pool";
     const [assetPoolPda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("asset_pool"), wallet.publicKey.toBuffer()],
+      [Buffer.from("asset_pool"), wallet.publicKey.toBuffer(), Buffer.from(assetPoolName)],
       program.programId
     );
     deployedAccounts.assetPool = assetPoolPda.toString();
@@ -284,7 +285,7 @@ async function main() {
     const createPoolTx = await tracker.trackTransaction(
       program.methods
         .createAssetPool(
-          "Demo Asset Pool",
+          assetPoolName,
           500, // platform_fee: 5%
           100, // senior_early_before_exit_fee: 1%
           200, // senior_early_after_exit_fee: 2%
@@ -315,7 +316,7 @@ async function main() {
 
     const approveTx = await tracker.trackTransaction(
       program.methods
-        .approveAssetPool(wallet.publicKey)
+        .approveAssetPool(wallet.publicKey, assetPoolName)
         .rpc(),
       "批准资产池",
       connection
