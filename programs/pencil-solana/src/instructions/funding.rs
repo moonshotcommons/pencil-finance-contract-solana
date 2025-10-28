@@ -30,7 +30,7 @@ pub struct SubscribeSenior<'info> {
     pub asset_mint: Account<'info, anchor_spl::token::Mint>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = user,
         space = 8 + std::mem::size_of::<Subscription>(),
         seeds = [seeds::SUBSCRIPTION, asset_pool.key().as_ref(), user.key().as_ref(), b"senior"],
@@ -70,12 +70,23 @@ pub fn subscribe_senior(ctx: Context<SubscribeSenior>, amount: u64) -> Result<()
 
     // 记录订阅
     let subscription = &mut ctx.accounts.subscription;
-    subscription.asset_pool = asset_pool.key();
-    subscription.user = ctx.accounts.user.key();
-    subscription.subscription_type = 0; // senior
-    subscription.amount = amount;
-    subscription.status = subscription_status::PENDING;
-    subscription.subscribed_at = clock.unix_timestamp;
+
+    // 判断是否是第一次投资（通过检查 amount 是否为 0）
+    if subscription.amount == 0 {
+        // 第一次投资，初始化所有字段
+        subscription.asset_pool = asset_pool.key();
+        subscription.user = ctx.accounts.user.key();
+        subscription.subscription_type = 0; // senior
+        subscription.amount = amount;
+        subscription.status = subscription_status::PENDING;
+        subscription.subscribed_at = clock.unix_timestamp;
+    } else {
+        // 累加投资
+        subscription.amount = subscription
+            .amount
+            .checked_add(amount)
+            .ok_or(PencilError::ArithmeticOverflow)?;
+    }
 
     // 更新资产池
     asset_pool.senior_amount = asset_pool
@@ -114,7 +125,7 @@ pub struct SubscribeJunior<'info> {
     pub asset_mint: Account<'info, anchor_spl::token::Mint>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = user,
         space = 8 + std::mem::size_of::<Subscription>(),
         seeds = [seeds::SUBSCRIPTION, asset_pool.key().as_ref(), user.key().as_ref(), b"junior"],
@@ -154,12 +165,23 @@ pub fn subscribe_junior(ctx: Context<SubscribeJunior>, amount: u64) -> Result<()
 
     // 记录订阅
     let subscription = &mut ctx.accounts.subscription;
-    subscription.asset_pool = asset_pool.key();
-    subscription.user = ctx.accounts.user.key();
-    subscription.subscription_type = 1; // junior
-    subscription.amount = amount;
-    subscription.status = subscription_status::PENDING;
-    subscription.subscribed_at = clock.unix_timestamp;
+
+    // 判断是否是第一次投资（通过检查 amount 是否为 0）
+    if subscription.amount == 0 {
+        // 第一次投资，初始化所有字段
+        subscription.asset_pool = asset_pool.key();
+        subscription.user = ctx.accounts.user.key();
+        subscription.subscription_type = 1; // junior
+        subscription.amount = amount;
+        subscription.status = subscription_status::PENDING;
+        subscription.subscribed_at = clock.unix_timestamp;
+    } else {
+        // 累加投资
+        subscription.amount = subscription
+            .amount
+            .checked_add(amount)
+            .ok_or(PencilError::ArithmeticOverflow)?;
+    }
 
     // 更新资产池
     asset_pool.junior_amount = asset_pool

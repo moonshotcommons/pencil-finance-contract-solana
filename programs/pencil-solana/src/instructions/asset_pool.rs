@@ -2,6 +2,7 @@ use crate::constants::*;
 use crate::errors::PencilError;
 use crate::state::{AssetPool, SystemConfig};
 use anchor_lang::prelude::*;
+use anchor_spl::token::Mint;
 
 #[derive(Accounts)]
 #[instruction(name: String)]
@@ -25,7 +26,7 @@ pub struct CreateAssetPool<'info> {
     pub asset_pool: Account<'info, AssetPool>,
 
     /// 资产代币地址
-    pub asset_address: Signer<'info>,
+    pub asset_address: Account<'info, Mint>,
 
     pub system_program: Program<'info, System>,
 }
