@@ -9,6 +9,110 @@ pub mod state;
 
 use instructions::*;
 
+// ==================== Events ====================
+
+#[event]
+pub struct AdminUpdated {
+    pub role: u8, // 0: SuperAdmin, 1: SystemAdmin, 2: TreasuryAdmin, 3: OperationAdmin
+    pub old_admin: Pubkey,
+    pub new_admin: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct SystemPaused {
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct SystemUnpaused {
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct FeeRateUpdated {
+    pub fee_type: u8, // 0: PlatformFee, 1: SeniorEarlyBeforeExitFee, 2: SeniorEarlyAfterExitFee, 3: JuniorEarlyBeforeExitFee
+    pub old_rate: u16,
+    pub new_rate: u16,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct AssetSupportUpdated {
+    pub asset: Pubkey,
+    pub supported: bool,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct RelatedAccountsInitialized {
+    pub asset_pool: Pubkey,
+    pub funding: Pubkey,
+    pub senior_pool: Pubkey,
+    pub first_loss_pool: Pubkey,
+    pub junior_interest_pool: Pubkey,
+    pub grow_token: Pubkey,
+    pub asset_pool_vault: Pubkey,
+    pub treasury_ata: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct TokensDistributed {
+    pub asset_pool: Pubkey,
+    pub senior_amount: u64,
+    pub junior_count: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct RefundProcessed {
+    pub asset_pool: Pubkey,
+    pub user: Pubkey,
+    pub amount: u64,
+    pub subscription_type: u8,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct RepaymentDistributed {
+    pub asset_pool: Pubkey,
+    pub period: u64,
+    pub total_amount: u64,
+    pub platform_fee: u64,
+    pub senior_amount: u64,
+    pub junior_interest: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct EarlyExitProcessed {
+    pub asset_pool: Pubkey,
+    pub user: Pubkey,
+    pub amount: u64,
+    pub fee: u64,
+    pub net_amount: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct InterestClaimed {
+    pub asset_pool: Pubkey,
+    pub user: Pubkey,
+    pub nft_id: u64,
+    pub amount: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct PrincipalWithdrawn {
+    pub asset_pool: Pubkey,
+    pub user: Pubkey,
+    pub nft_id: u64,
+    pub amount: u64,
+    pub timestamp: i64,
+}
+
 #[program]
 pub mod pencil_solana {
     use super::*;
@@ -30,6 +134,42 @@ pub mod pencil_solana {
             junior_early_before_exit_fee_rate,
             default_min_junior_ratio,
         )
+    }
+
+    pub fn update_admin(
+        ctx: Context<UpdateAdmin>,
+        role: instructions::AdminRole,
+        new_admin: Pubkey,
+    ) -> Result<()> {
+        instructions::update_admin(ctx, role, new_admin)
+    }
+
+    pub fn pause_system(ctx: Context<PauseSystem>) -> Result<()> {
+        instructions::pause_system(ctx)
+    }
+
+    pub fn unpause_system(ctx: Context<UnpauseSystem>) -> Result<()> {
+        instructions::unpause_system(ctx)
+    }
+
+    pub fn update_fee_rate(
+        ctx: Context<UpdateFeeRate>,
+        fee_type: instructions::FeeType,
+        new_rate: u16,
+    ) -> Result<()> {
+        instructions::update_fee_rate(ctx, fee_type, new_rate)
+    }
+
+    pub fn set_treasury(ctx: Context<SetTreasury>, treasury: Pubkey) -> Result<()> {
+        instructions::set_treasury(ctx, treasury)
+    }
+
+    pub fn set_asset_supported(
+        ctx: Context<SetAssetSupported>,
+        asset: Pubkey,
+        supported: bool,
+    ) -> Result<()> {
+        instructions::set_asset_supported(ctx, asset, supported)
     }
 
     // ==================== Asset Pool ====================
@@ -77,6 +217,10 @@ pub mod pencil_solana {
         instructions::approve_asset_pool(ctx, creator, name)
     }
 
+    pub fn initialize_related_accounts(ctx: Context<InitializeRelatedAccounts>) -> Result<()> {
+        instructions::initialize_related_accounts(ctx)
+    }
+
     // ==================== Funding ====================
     pub fn subscribe_senior(ctx: Context<SubscribeSenior>, amount: u64) -> Result<()> {
         instructions::subscribe_senior(ctx, amount)
@@ -90,6 +234,22 @@ pub mod pencil_solana {
         instructions::complete_funding(ctx)
     }
 
+    pub fn distribute_senior_token(ctx: Context<DistributeSeniorToken>) -> Result<()> {
+        instructions::distribute_senior_token(ctx)
+    }
+
+    pub fn distribute_junior_nft(ctx: Context<DistributeJuniorNFT>, nft_id: u64) -> Result<()> {
+        instructions::distribute_junior_nft(ctx, nft_id)
+    }
+
+    pub fn finalize_token_distribution(
+        ctx: Context<FinalizeTokenDistribution>,
+        senior_count: u64,
+        junior_count: u64,
+    ) -> Result<()> {
+        instructions::finalize_token_distribution(ctx, senior_count, junior_count)
+    }
+
     pub fn refund_subscription(
         ctx: Context<RefundSubscription>,
         subscription_type: u8, // 0 for senior, 1 for junior
@@ -97,13 +257,21 @@ pub mod pencil_solana {
         instructions::refund_subscription(ctx, subscription_type)
     }
 
-    // ==================== Repayment ====================
-    pub fn repay(ctx: Context<Repay>, amount: u64) -> Result<()> {
-        instructions::repay(ctx, amount)
+    pub fn process_refund(ctx: Context<ProcessRefund>) -> Result<()> {
+        instructions::process_refund(ctx)
     }
 
-    pub fn claim_interest(ctx: Context<ClaimInterest>, amount: u64) -> Result<()> {
-        instructions::claim_interest(ctx, amount)
+    pub fn cancel_asset_pool(ctx: Context<CancelAssetPool>) -> Result<()> {
+        instructions::cancel_asset_pool(ctx)
+    }
+
+    // ==================== Repayment ====================
+    pub fn repay(ctx: Context<Repay>, amount: u64, period: u64) -> Result<()> {
+        instructions::repay(ctx, amount, period)
+    }
+
+    pub fn claim_junior_interest(ctx: Context<ClaimJuniorInterest>, nft_id: u64) -> Result<()> {
+        instructions::claim_junior_interest(ctx, nft_id)
     }
 
     pub fn withdraw_principal(ctx: Context<WithdrawPrincipal>, nft_id: u64) -> Result<()> {

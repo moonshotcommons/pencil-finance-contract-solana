@@ -11,16 +11,37 @@ Pencil Solana is a DeFi protocol that implements a structured finance model with
 ### Core Functionality
 
 - **System Configuration Management**: Centralized system-wide parameter configuration with multi-level admin roles
+  - Multi-role admin system (Super Admin, System Admin, Treasury Admin, Operation Admin)
+  - System pause/unpause mechanism for emergency control
+  - Dynamic fee rate updates
+  - Asset whitelist management
 - **Asset Pool Creation**: Create and manage asset pools with customizable parameters
+  - Factory-style initialization of all related accounts in one transaction
+  - Asset whitelist validation
+  - Comprehensive pool lifecycle management (Created → Approved → Funded → Ended → Cancelled)
 - **Dual Tranche Structure**:
   - **Senior Tranche**: Priority returns with fixed interest rates and lower risk
   - **Junior Tranche**: First-loss protection with higher potential returns
 - **Fundraising Mechanism**: Subscribe to senior or junior tranches during funding periods
+  - Automated token distribution after successful funding
+  - Refund mechanism for failed funding rounds
+  - Minimum funding and junior ratio requirements
 - **Repayment Management**: Structured repayment schedules with interest distribution
+  - Automated fund distribution (platform fees, senior interest, junior interest)
+  - FirstLossPool補足 mechanism for senior shortfalls
+  - Period-based repayment tracking
 - **Token System**:
-  - **GROW Token**: Fungible token representing senior tranche positions
-  - **Junior NFT**: Non-fungible token representing junior tranche positions
+  - **GROW Token**: SPL fungible token representing senior tranche positions
+  - **Junior NFT**: SPL non-fungible token (supply=1) representing junior tranche positions
+  - Metadata storage for NFT principal and interest tracking
 - **Early Exit Options**: Exit positions before maturity with configurable fees
+  - Time-based fee calculation (before/after funding end)
+  - Automatic GROW token burning
+  - FirstLossPool補足 for insufficient vault balance
+- **Interest and Principal Management**:
+  - Junior interest claiming with proportional distribution
+  - Principal withdrawal after pool ends
+  - Comprehensive state tracking to prevent double-claiming
 
 ### Key Components
 
@@ -51,27 +72,40 @@ Pencil Solana is a DeFi protocol that implements a structured finance model with
 
 #### System Configuration
 - `initialize_system_config`: Initialize platform configuration
+- `update_admin`: Update admin role addresses
+- `pause_system`: Pause all critical operations
+- `unpause_system`: Resume system operations
+- `update_fee_rate`: Update fee rate parameters
+- `set_treasury`: Set treasury address for fee collection
+- `set_asset_supported`: Add/remove assets from whitelist
 
 #### Asset Pool Management
 - `create_asset_pool`: Create a new asset pool
 - `approve_asset_pool`: Approve an asset pool for fundraising
+- `initialize_related_accounts`: Factory-initialize all pool accounts
+- `cancel_asset_pool`: Cancel a failed pool after refunds
 
 #### Fundraising
 - `subscribe_senior`: Subscribe to senior tranche
 - `subscribe_junior`: Subscribe to junior tranche
 - `complete_funding`: Complete the fundraising phase
-- `refund_subscription`: Refund subscription if funding fails
+- `distribute_senior_token`: Distribute GROW tokens to senior investors
+- `distribute_junior_nft`: Mint and distribute Junior NFTs
+- `finalize_token_distribution`: Finalize distribution and update pool status
+- `refund_subscription` / `process_refund`: Refund subscription if funding fails
 
 #### Repayment
-- `repay`: Make repayment to the pool
-- `claim_interest`: Claim interest earnings
-- `withdraw_principal`: Withdraw principal after maturity
+- `repay`: Make repayment with automated fund distribution
+- `claim_junior_interest`: Claim accumulated interest (Junior NFT holders)
+- `withdraw_principal`: Withdraw principal after pool ends (Junior NFT holders)
 - `early_exit_senior`: Exit senior position early with fees
 
 #### Token Management
 - `mint_grow_token`: Mint GROW tokens for senior positions
 - `burn_grow_token`: Burn GROW tokens when exiting
-- `mint_junior_nft`: Mint NFT for junior positions
+- `mint_junior_nft`: Mint NFT for junior positions with metadata
+
+For detailed API documentation, see [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)
 
 ## Getting Started
 
@@ -176,7 +210,19 @@ For detailed deployment instructions, please refer to [scripts/README.md](script
 
 ## Testing
 
-The test suite covers all major functionalities:
+The comprehensive test suite covers all major functionalities including:
+
+- **System Configuration**: Admin management, pause/unpause, fee updates
+- **Asset Whitelist**: Adding/removing supported assets
+- **Asset Pool Lifecycle**: Creation, approval, initialization
+- **Funding Scenarios**: Successful funding, failed funding with refunds
+- **Token Distribution**: GROW tokens and Junior NFTs
+- **Repayment Flow**: Fund distribution, interest allocation
+- **Early Exit**: Senior early exit with fee calculation
+- **Interest Claiming**: Junior interest claiming with proportional distribution
+- **Principal Withdrawal**: Junior principal withdrawal after pool ends
+- **System Pause**: Blocking operations when system is paused
+- **Concurrent Operations**: Multi-user subscriptions, claims, and withdrawals
 
 ```bash
 # Run all tests
@@ -184,7 +230,23 @@ anchor test
 
 # Run specific test file
 anchor test tests/pencil-solana.ts
+
+# Run with detailed logs
+RUST_LOG=debug anchor test
 ```
+
+### Test Coverage
+
+- ✅ System configuration and governance
+- ✅ Asset whitelist management
+- ✅ Complete pool lifecycle (create → fund → repay → withdraw)
+- ✅ Failed funding refund scenarios
+- ✅ Senior early exit mechanism
+- ✅ Junior interest claiming
+- ✅ Principal withdrawal
+- ✅ System pause scenarios
+- ✅ Multi-user concurrent operations
+- ✅ Integration tests for complete flows
 
 ## Configuration Parameters
 

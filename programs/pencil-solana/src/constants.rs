@@ -47,7 +47,7 @@ pub mod asset_pool_status {
     pub const FUNDING: u8 = 2;
     pub const FUNDED: u8 = 3;
     pub const REPAYING: u8 = 4;
-    pub const COMPLETED: u8 = 5;
+    pub const COMPLETED: u8 = 5; // ENDED - 项目已结束，可以提取本金
     pub const CANCELLED: u8 = 6;
 }
 
@@ -79,5 +79,5 @@ pub mod seeds {
     pub const SUBSCRIPTION: &[u8] = b"subscription";
     pub const REPAYMENT_RECORD: &[u8] = b"repayment_record";
     pub const JUNIOR_NFT_METADATA: &[u8] = b"junior_nft_metadata";
+    pub const ASSET_WHITELIST: &[u8] = b"asset_whitelist";
 }
-

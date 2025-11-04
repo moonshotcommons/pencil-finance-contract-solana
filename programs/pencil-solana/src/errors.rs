@@ -169,5 +169,40 @@ pub enum PencilError {
 
     #[msg("Precision loss in calculation")]
     PrecisionLoss,
-}
 
+    #[msg("System is paused")]
+    SystemPaused,
+
+    #[msg("Invalid admin role")]
+    InvalidAdminRole,
+
+    #[msg("Invalid fee type")]
+    InvalidFeeType,
+
+    #[msg("Asset not in whitelist")]
+    AssetNotSupported,
+
+    #[msg("Related accounts already initialized")]
+    RelatedAccountsAlreadyInitialized,
+
+    #[msg("Related accounts not initialized")]
+    RelatedAccountsNotInitialized,
+
+    #[msg("Insufficient vault balance")]
+    InsufficientVaultBalance,
+
+    #[msg("Invalid early exit timing")]
+    InvalidEarlyExitTiming,
+
+    #[msg("NFT not owned by user")]
+    NFTNotOwnedByUser,
+
+    #[msg("Principal already withdrawn")]
+    PrincipalAlreadyWithdrawn,
+
+    #[msg("Pool not ended")]
+    PoolNotEnded,
+
+    #[msg("Invalid period calculation")]
+    InvalidPeriodCalculation,
+}
