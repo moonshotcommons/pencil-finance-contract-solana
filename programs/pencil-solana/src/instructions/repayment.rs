@@ -20,63 +20,63 @@ pub struct Repay<'info> {
         bump,
         constraint = !system_config.paused @ PencilError::SystemPaused
     )]
-    pub system_config: Account<'info, SystemConfig>,
+    pub system_config: Box<Account<'info, SystemConfig>>,
 
     #[account(
         seeds = [seeds::ASSET_WHITELIST],
         bump
     )]
-    pub asset_whitelist: Account<'info, AssetWhitelist>,
+    pub asset_whitelist: Box<Account<'info, AssetWhitelist>>,
 
     #[account(
         mut,
         seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
         bump
     )]
-    pub asset_pool: Account<'info, AssetPool>,
+    pub asset_pool: Box<Account<'info, AssetPool>>,
 
     #[account(
         mut,
         seeds = [seeds::SENIOR_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub senior_pool: Account<'info, SeniorPool>,
+    pub senior_pool: Box<Account<'info, SeniorPool>>,
 
     #[account(
         mut,
         seeds = [seeds::FIRST_LOSS_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub first_loss_pool: Account<'info, FirstLossPool>,
+    pub first_loss_pool: Box<Account<'info, FirstLossPool>>,
 
     #[account(
         mut,
         seeds = [seeds::JUNIOR_INTEREST_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub junior_interest_pool: Account<'info, JuniorInterestPool>,
+    pub junior_interest_pool: Box<Account<'info, JuniorInterestPool>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = payer
     )]
-    pub payer_token_account: Account<'info, TokenAccount>,
+    pub payer_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = asset_pool
     )]
-    pub asset_pool_vault: Account<'info, TokenAccount>,
+    pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint
     )]
-    pub treasury_ata: Account<'info, TokenAccount>,
+    pub treasury_ata: Box<Account<'info, TokenAccount>>,
 
-    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+    pub asset_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     /// Repayment record - one per period
     #[account(
@@ -86,7 +86,7 @@ pub struct Repay<'info> {
         seeds = [seeds::REPAYMENT_RECORD, asset_pool.key().as_ref(), &period.to_le_bytes()],
         bump
     )]
-    pub repayment_record: Account<'info, RepaymentRecord>,
+    pub repayment_record: Box<Account<'info, RepaymentRecord>>,
 
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
@@ -408,28 +408,28 @@ pub struct ClaimJuniorInterest<'info> {
         bump,
         constraint = !system_config.paused @ PencilError::SystemPaused
     )]
-    pub system_config: Account<'info, SystemConfig>,
+    pub system_config: Box<Account<'info, SystemConfig>>,
 
     #[account(
         mut,
         seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
         bump
     )]
-    pub asset_pool: Account<'info, AssetPool>,
+    pub asset_pool: Box<Account<'info, AssetPool>>,
 
     #[account(
         mut,
         seeds = [seeds::FIRST_LOSS_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub first_loss_pool: Account<'info, FirstLossPool>,
+    pub first_loss_pool: Box<Account<'info, FirstLossPool>>,
 
     #[account(
         mut,
         seeds = [seeds::JUNIOR_INTEREST_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub junior_interest_pool: Account<'info, JuniorInterestPool>,
+    pub junior_interest_pool: Box<Account<'info, JuniorInterestPool>>,
 
     #[account(
         mut,
@@ -437,7 +437,7 @@ pub struct ClaimJuniorInterest<'info> {
         bump,
         constraint = nft_metadata.owner == user.key() @ PencilError::Unauthorized
     )]
-    pub nft_metadata: Account<'info, JuniorNFTMetadata>,
+    pub nft_metadata: Box<Account<'info, JuniorNFTMetadata>>,
 
     #[account(
         mut,
@@ -445,29 +445,29 @@ pub struct ClaimJuniorInterest<'info> {
         token::authority = user,
         constraint = user_nft_account.amount == 1 @ PencilError::Unauthorized
     )]
-    pub user_nft_account: Account<'info, TokenAccount>,
+    pub user_nft_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         seeds = [seeds::JUNIOR_NFT_MINT, asset_pool.key().as_ref(), &nft_id.to_le_bytes()],
         bump
     )]
-    pub junior_nft_mint: Account<'info, anchor_spl::token::Mint>,
+    pub junior_nft_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = user
     )]
-    pub user_asset_account: Account<'info, TokenAccount>,
+    pub user_asset_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = asset_pool
     )]
-    pub asset_pool_vault: Account<'info, TokenAccount>,
+    pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 
-    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+    pub asset_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     pub token_program: Program<'info, Token>,
 }
@@ -581,7 +581,7 @@ pub struct WithdrawPrincipal<'info> {
         bump,
         constraint = !system_config.paused @ PencilError::SystemPaused
     )]
-    pub system_config: Account<'info, SystemConfig>,
+    pub system_config: Box<Account<'info, SystemConfig>>,
 
     #[account(
         mut,
@@ -589,14 +589,14 @@ pub struct WithdrawPrincipal<'info> {
         bump,
         constraint = asset_pool.status == asset_pool_status::COMPLETED @ PencilError::InvalidAssetPoolStatus
     )]
-    pub asset_pool: Account<'info, AssetPool>,
+    pub asset_pool: Box<Account<'info, AssetPool>>,
 
     #[account(
         mut,
         seeds = [seeds::FIRST_LOSS_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub first_loss_pool: Account<'info, FirstLossPool>,
+    pub first_loss_pool: Box<Account<'info, FirstLossPool>>,
 
     #[account(
         mut,
@@ -605,7 +605,7 @@ pub struct WithdrawPrincipal<'info> {
         constraint = nft_metadata.owner == user.key() @ PencilError::Unauthorized,
         constraint = !nft_metadata.principal_withdrawn @ PencilError::NoPrincipalToWithdraw
     )]
-    pub nft_metadata: Account<'info, JuniorNFTMetadata>,
+    pub nft_metadata: Box<Account<'info, JuniorNFTMetadata>>,
 
     #[account(
         mut,
@@ -613,29 +613,29 @@ pub struct WithdrawPrincipal<'info> {
         token::authority = user,
         constraint = user_nft_account.amount == 1 @ PencilError::Unauthorized
     )]
-    pub user_nft_account: Account<'info, TokenAccount>,
+    pub user_nft_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         seeds = [seeds::JUNIOR_NFT_MINT, asset_pool.key().as_ref(), &nft_id.to_le_bytes()],
         bump
     )]
-    pub junior_nft_mint: Account<'info, anchor_spl::token::Mint>,
+    pub junior_nft_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = user
     )]
-    pub user_asset_account: Account<'info, TokenAccount>,
+    pub user_asset_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = asset_pool
     )]
-    pub asset_pool_vault: Account<'info, TokenAccount>,
+    pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 
-    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+    pub asset_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     pub token_program: Program<'info, Token>,
 }
@@ -737,64 +737,64 @@ pub struct EarlyExitSenior<'info> {
         bump,
         constraint = !system_config.paused @ PencilError::SystemPaused
     )]
-    pub system_config: Account<'info, SystemConfig>,
+    pub system_config: Box<Account<'info, SystemConfig>>,
 
     #[account(
         mut,
         seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
         bump
     )]
-    pub asset_pool: Account<'info, AssetPool>,
+    pub asset_pool: Box<Account<'info, AssetPool>>,
 
     #[account(
         mut,
         seeds = [seeds::SENIOR_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub senior_pool: Account<'info, SeniorPool>,
+    pub senior_pool: Box<Account<'info, SeniorPool>>,
 
     #[account(
         mut,
         seeds = [seeds::FIRST_LOSS_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub first_loss_pool: Account<'info, FirstLossPool>,
+    pub first_loss_pool: Box<Account<'info, FirstLossPool>>,
 
     #[account(
         mut,
         seeds = [seeds::GROW_TOKEN_MINT, asset_pool.key().as_ref()],
         bump
     )]
-    pub grow_token_mint: Account<'info, anchor_spl::token::Mint>,
+    pub grow_token_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     #[account(
         mut,
         token::mint = grow_token_mint,
         token::authority = user
     )]
-    pub user_grow_token_account: Account<'info, TokenAccount>,
+    pub user_grow_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = user
     )]
-    pub user_asset_account: Account<'info, TokenAccount>,
+    pub user_asset_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint,
         token::authority = asset_pool
     )]
-    pub asset_pool_vault: Account<'info, TokenAccount>,
+    pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 
     #[account(
         mut,
         token::mint = asset_mint
     )]
-    pub treasury_ata: Account<'info, TokenAccount>,
+    pub treasury_ata: Box<Account<'info, TokenAccount>>,
 
-    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+    pub asset_mint: Box<Account<'info, anchor_spl::token::Mint>>,
 
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,

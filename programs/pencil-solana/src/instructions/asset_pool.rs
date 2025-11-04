@@ -203,17 +203,17 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::SYSTEM_CONFIG],
         bump
     )]
-    pub system_config: Account<'info, SystemConfig>,
+    pub system_config: Box<Account<'info, SystemConfig>>,
 
     #[account(
         mut,
         constraint = asset_pool.status == asset_pool_status::APPROVED @ PencilError::AssetPoolNotApproved,
         constraint = !asset_pool.related_accounts_initialized @ PencilError::RelatedAccountsAlreadyInitialized
     )]
-    pub asset_pool: Account<'info, AssetPool>,
+    pub asset_pool: Box<Account<'info, AssetPool>>,
 
     /// 资产代币 Mint
-    pub asset_mint: Account<'info, Mint>,
+    pub asset_mint: Box<Account<'info, Mint>>,
 
     /// Funding PDA 账户
     #[account(
@@ -223,7 +223,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::FUNDING, asset_pool.key().as_ref()],
         bump
     )]
-    pub funding: Account<'info, Funding>,
+    pub funding: Box<Account<'info, Funding>>,
 
     /// SeniorPool PDA 账户
     #[account(
@@ -233,7 +233,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::SENIOR_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub senior_pool: Account<'info, SeniorPool>,
+    pub senior_pool: Box<Account<'info, SeniorPool>>,
 
     /// FirstLossPool PDA 账户
     #[account(
@@ -243,7 +243,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::FIRST_LOSS_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub first_loss_pool: Account<'info, FirstLossPool>,
+    pub first_loss_pool: Box<Account<'info, FirstLossPool>>,
 
     /// JuniorInterestPool PDA 账户
     #[account(
@@ -253,7 +253,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::JUNIOR_INTEREST_POOL, asset_pool.key().as_ref()],
         bump
     )]
-    pub junior_interest_pool: Account<'info, JuniorInterestPool>,
+    pub junior_interest_pool: Box<Account<'info, JuniorInterestPool>>,
 
     /// GROW Token Mint PDA
     #[account(
@@ -264,7 +264,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::GROW_TOKEN_MINT, asset_pool.key().as_ref()],
         bump
     )]
-    pub grow_token_mint: Account<'info, Mint>,
+    pub grow_token_mint: Box<Account<'info, Mint>>,
 
     /// Junior NFT Mint PDA (用作基础 mint，实际 NFT 会有独立的 mint)
     #[account(
@@ -275,7 +275,7 @@ pub struct InitializeRelatedAccounts<'info> {
         seeds = [seeds::JUNIOR_NFT_MINT, asset_pool.key().as_ref()],
         bump
     )]
-    pub junior_nft_mint: Account<'info, Mint>,
+    pub junior_nft_mint: Box<Account<'info, Mint>>,
 
     /// 资产池 Token Vault ATA
     #[account(
@@ -284,7 +284,7 @@ pub struct InitializeRelatedAccounts<'info> {
         associated_token::mint = asset_mint,
         associated_token::authority = asset_pool
     )]
-    pub asset_pool_vault: Account<'info, TokenAccount>,
+    pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 
     /// 金库账户 (从 SystemConfig 读取)
     /// CHECK: This is the treasury account from SystemConfig
@@ -300,7 +300,7 @@ pub struct InitializeRelatedAccounts<'info> {
         associated_token::mint = asset_mint,
         associated_token::authority = treasury
     )]
-    pub treasury_ata: Account<'info, TokenAccount>,
+    pub treasury_ata: Box<Account<'info, TokenAccount>>,
 
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,
