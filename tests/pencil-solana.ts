@@ -188,9 +188,7 @@ describe("pencil-solana", () => {
         )
         .accounts({
           assetAddress: assetAddress.publicKey,
-          assetWhitelist: assetWhitelistPda,
         })
-        .signers([assetAddress])
         .rpc();
 
       console.log("✅ Asset pool created:", tx);
@@ -259,15 +257,7 @@ describe("pencil-solana", () => {
         .accounts({
           assetPool: assetPoolPda,
           assetMint: assetAddress.publicKey,
-          funding: fundingPda,
-          seniorPool: seniorPoolPda,
-          firstLossPool: firstLossPoolPda,
-          juniorInterestPool: juniorInterestPoolPda,
-          growTokenMint: growTokenMintPda,
-          juniorNftMint: juniorNftMintPda,
-          assetPoolVault: assetPoolVault,
           treasury: systemConfig.treasury,
-          treasuryAta: treasuryAta,
         })
         .rpc();
 
@@ -313,7 +303,7 @@ describe("pencil-solana", () => {
       console.log("✅ All related accounts verified successfully");
     });
   });
-});
+
 
   describe("Funding Failure and Refund", () => {
     const failedPoolName = "Failed Pool Test";
@@ -351,9 +341,7 @@ describe("pencil-solana", () => {
         )
         .accounts({
           assetAddress: assetAddress.publicKey,
-          assetWhitelist: assetWhitelistPda,
         })
-        .signers([assetAddress])
         .rpc();
 
       console.log("✅ Failed pool created:", tx);
@@ -410,15 +398,7 @@ describe("pencil-solana", () => {
         .accounts({
           assetPool: failedPoolPda,
           assetMint: assetAddress.publicKey,
-          funding: fundingPda,
-          seniorPool: seniorPoolPda,
-          firstLossPool: firstLossPoolPda,
-          juniorInterestPool: juniorInterestPoolPda,
-          growTokenMint: growTokenMintPda,
-          juniorNftMint: juniorNftMintPda,
-          assetPoolVault: failedPoolVault,
           treasury: systemConfig.treasury,
-          treasuryAta: treasuryAta,
         })
         .rpc();
 
@@ -474,7 +454,7 @@ describe("pencil-solana", () => {
             poolVault: failedPoolVault,
             userTokenAccount: seniorTokenAccount,
             assetMint: assetAddress.publicKey,
-          })
+          } as any)
           .signers([seniorInvestor])
           .rpc();
 
@@ -498,7 +478,7 @@ describe("pencil-solana", () => {
             assetPool: failedPoolPda,
             poolVault: failedPoolVault,
             assetMint: assetAddress.publicKey,
-          })
+          } as any)
           .rpc();
 
         console.log("✅ Asset pool cancelled:", tx);
@@ -567,7 +547,6 @@ describe("pencil-solana", () => {
           .earlyExitSenior(exitAmount)
           .accounts({
             user: payer.publicKey,
-            systemConfig: systemConfigPda,
             assetPool: assetPoolPda,
             seniorPool: seniorPoolPda,
             firstLossPool: firstLossPoolPda,
@@ -577,7 +556,7 @@ describe("pencil-solana", () => {
             assetPoolVault: assetPoolVault,
             treasuryAta: treasuryAta,
             assetMint: assetAddress.publicKey,
-          })
+          } as any)
           .rpc();
 
         console.log("✅ Senior early exit processed:", tx);
@@ -890,9 +869,7 @@ describe("pencil-solana", () => {
             )
             .accounts({
               assetAddress: assetAddress.publicKey,
-              assetWhitelist: assetWhitelistPda,
             })
-            .signers([assetAddress])
             .rpc();
 
           assert.fail("Should have thrown SystemPaused error");
