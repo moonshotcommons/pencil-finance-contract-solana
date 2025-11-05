@@ -180,8 +180,7 @@ async function main() {
   anchor.setProvider(provider);
 
   const program = anchor.workspace.PencilSolana as Program<PencilSolana>;
-  const connection = provider.connection;
-  const wallet = provider.wallet;
+  
 
   // 检测网络类型
   const rpcEndpoint = connection.rpcEndpoint;
