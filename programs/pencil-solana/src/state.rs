@@ -23,10 +23,10 @@ pub struct SystemConfig {
     pub junior_early_before_exit_fee_rate: u16,
     /// 默认最低 Junior 占比
     pub default_min_junior_ratio: u16,
-    /// 系统暂停状态
-    pub paused: bool,
     /// 是否已初始化
     pub initialized: bool,
+    /// 系统暂停状态
+    pub paused: bool,
     /// 预留空间
     pub _reserved: [u8; 127],
 }
@@ -56,10 +56,6 @@ pub struct AssetPool {
     pub junior_nft: Pubkey,
     /// 金库地址
     pub treasury: Pubkey,
-    /// 资产池 Token Vault ATA
-    pub asset_pool_vault: Pubkey,
-    /// 金库 ATA
-    pub treasury_ata: Pubkey,
     /// 平台手续费 (基点)
     pub platform_fee: u16,
     /// 优先份额募资结束前提前退出手续费
@@ -98,6 +94,10 @@ pub struct AssetPool {
     pub created_at: i64,
     /// 相关账户是否已初始化
     pub related_accounts_initialized: bool,
+    /// 资产池 Token Vault ATA
+    pub asset_pool_vault: Pubkey,
+    /// 金库 ATA
+    pub treasury_ata: Pubkey,
     /// 预留空间
     pub _reserved: [u8; 63],
 }

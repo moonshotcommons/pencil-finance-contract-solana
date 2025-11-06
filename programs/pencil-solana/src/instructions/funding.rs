@@ -770,3 +770,249 @@ pub fn cancel_asset_pool(ctx: Context<CancelAssetPool>) -> Result<()> {
 
     Ok(())
 }
+
+// 提前退出 - Senior 投资者
+#[derive(Accounts)]
+#[instruction(amount: u64)]
+pub struct WithdrawSeniorSubscription<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    #[account(
+        seeds = [seeds::SYSTEM_CONFIG],
+        bump
+    )]
+    pub system_config: Account<'info, crate::state::SystemConfig>,
+
+    #[account(mut)]
+    pub asset_pool: Account<'info, AssetPool>,
+
+    #[account(
+        mut,
+        constraint = subscription.asset_pool == asset_pool.key() @ PencilError::InvalidAccount,
+        constraint = subscription.subscription_type == 0 @ PencilError::InvalidSubscriptionStatus,
+        constraint = subscription.user == user.key() @ PencilError::Unauthorized
+    )]
+    pub subscription: Account<'info, Subscription>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = asset_pool
+    )]
+    pub pool_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = user
+    )]
+    pub user_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = treasury
+    )]
+    pub treasury_ata: Account<'info, TokenAccount>,
+
+    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+
+    /// CHECK: Treasury account from SystemConfig
+    pub treasury: AccountInfo<'info>,
+
+    pub token_program: Program<'info, Token>,
+}
+
+pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, amount: u64) -> Result<()> {
+    require!(amount > 0, PencilError::InvalidSubscriptionAmount);
+    require!(
+        amount <= ctx.accounts.subscription.amount,
+        PencilError::InsufficientBalance
+    );
+
+    // 检查系统是否暂停
+    require!(
+        !ctx.accounts.system_config.paused,
+        PencilError::SystemPaused
+    );
+
+    // 检查募资状态（只能在募资期间提前退出）
+    let clock = Clock::get()?;
+    require!(
+        clock.unix_timestamp <= ctx.accounts.asset_pool.funding_end_time,
+        PencilError::FundingEnded
+    );
+
+    // 计算手续费
+    let fee_rate = ctx.accounts.system_config.senior_early_before_exit_fee_rate;
+    let fee = amount
+        .checked_mul(fee_rate as u64)
+        .ok_or(PencilError::ArithmeticOverflow)?
+        .checked_div(10000)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+    let actual_amount = amount
+        .checked_sub(fee)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 更新订阅金额
+    ctx.accounts.subscription.amount = ctx.accounts.subscription.amount
+        .checked_sub(amount)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 更新资产池 Senior 金额
+    ctx.accounts.asset_pool.senior_amount = ctx.accounts.asset_pool.senior_amount
+        .checked_sub(amount)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 转账手续费到金库
+    if fee > 0 {
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.pool_token_account.to_account_info(),
+            to: ctx.accounts.treasury_ata.to_account_info(),
+            authority: ctx.accounts.asset_pool.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::transfer(cpi_ctx, fee)?;
+    }
+
+    // 转账本金给用户
+    if actual_amount > 0 {
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.pool_token_account.to_account_info(),
+            to: ctx.accounts.user_token_account.to_account_info(),
+            authority: ctx.accounts.asset_pool.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::transfer(cpi_ctx, actual_amount)?;
+    }
+
+    msg!("Senior subscription withdrawn: {} tokens, fee: {}", amount, fee);
+
+    Ok(())
+}
+
+// 提前退出 - Junior 投资者
+#[derive(Accounts)]
+#[instruction(amount: u64)]
+pub struct WithdrawJuniorSubscription<'info> {
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    #[account(
+        seeds = [seeds::SYSTEM_CONFIG],
+        bump
+    )]
+    pub system_config: Account<'info, crate::state::SystemConfig>,
+
+    #[account(mut)]
+    pub asset_pool: Account<'info, AssetPool>,
+
+    #[account(
+        mut,
+        constraint = subscription.asset_pool == asset_pool.key() @ PencilError::InvalidAccount,
+        constraint = subscription.subscription_type == 1 @ PencilError::InvalidSubscriptionStatus,
+        constraint = subscription.user == user.key() @ PencilError::Unauthorized
+    )]
+    pub subscription: Account<'info, Subscription>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = asset_pool
+    )]
+    pub pool_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = user
+    )]
+    pub user_token_account: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = asset_mint,
+        token::authority = treasury
+    )]
+    pub treasury_ata: Account<'info, TokenAccount>,
+
+    pub asset_mint: Account<'info, anchor_spl::token::Mint>,
+
+    /// CHECK: Treasury account from SystemConfig
+    pub treasury: AccountInfo<'info>,
+
+    pub token_program: Program<'info, Token>,
+}
+
+pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, amount: u64) -> Result<()> {
+    require!(amount > 0, PencilError::InvalidSubscriptionAmount);
+    require!(
+        amount <= ctx.accounts.subscription.amount,
+        PencilError::InsufficientBalance
+    );
+
+    // 检查系统是否暂停
+    require!(
+        !ctx.accounts.system_config.paused,
+        PencilError::SystemPaused
+    );
+
+    // 检查募资状态（只能在募资期间提前退出）
+    let clock = Clock::get()?;
+    require!(
+        clock.unix_timestamp <= ctx.accounts.asset_pool.funding_end_time,
+        PencilError::FundingEnded
+    );
+
+    // 计算手续费
+    let fee_rate = ctx.accounts.system_config.junior_early_before_exit_fee_rate;
+    let fee = amount
+        .checked_mul(fee_rate as u64)
+        .ok_or(PencilError::ArithmeticOverflow)?
+        .checked_div(10000)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+    let actual_amount = amount
+        .checked_sub(fee)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 更新订阅金额
+    ctx.accounts.subscription.amount = ctx.accounts.subscription.amount
+        .checked_sub(amount)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 更新资产池 Junior 金额
+    ctx.accounts.asset_pool.junior_amount = ctx.accounts.asset_pool.junior_amount
+        .checked_sub(amount)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 转账手续费到金库
+    if fee > 0 {
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.pool_token_account.to_account_info(),
+            to: ctx.accounts.treasury_ata.to_account_info(),
+            authority: ctx.accounts.asset_pool.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::transfer(cpi_ctx, fee)?;
+    }
+
+    // 转账本金给用户
+    if actual_amount > 0 {
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.pool_token_account.to_account_info(),
+            to: ctx.accounts.user_token_account.to_account_info(),
+            authority: ctx.accounts.asset_pool.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::transfer(cpi_ctx, actual_amount)?;
+    }
+
+    msg!("Junior subscription withdrawn: {} tokens, fee: {}", amount, fee);
+
+    Ok(())
+}

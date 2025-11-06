@@ -265,6 +265,14 @@ pub mod pencil_solana {
         instructions::cancel_asset_pool(ctx)
     }
 
+    pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, amount: u64) -> Result<()> {
+        instructions::withdraw_senior_subscription(ctx, amount)
+    }
+
+    pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, amount: u64) -> Result<()> {
+        instructions::withdraw_junior_subscription(ctx, amount)
+    }
+
     // ==================== Repayment ====================
     pub fn repay(ctx: Context<Repay>, amount: u64, period: u64) -> Result<()> {
         instructions::repay(ctx, amount, period)

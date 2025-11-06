@@ -142,7 +142,7 @@ function getClusterUrl(cluster: string): string {
     case "localnet":
       return "http://127.0.0.1:8899";
     case "devnet":
-      return "https://api.devnet.solana.com";
+      return "https://distinguished-morning-snowflake.solana-devnet.quiknode.pro/5834e30419564fcc6461f3746bf23f7d96b0d1d7";
     case "testnet":
       return "https://api.testnet.solana.com";
     case "mainnet":
@@ -180,7 +180,7 @@ async function main() {
   anchor.setProvider(provider);
 
   const program = anchor.workspace.PencilSolana as Program<PencilSolana>;
-  
+
 
   // 检测网络类型
   const rpcEndpoint = connection.rpcEndpoint;

@@ -1,6 +1,16 @@
 .anchor
 .DS_Store
-target
+target/*
+
+!target/types/
+!target/idl/
+
+target/types/*
+target/idl/*
+
+!target/types/pencil_solana.ts
+!target/idl/pencil_solana.json
+
 **/*.rs.bk
 node_modules
 test-ledger

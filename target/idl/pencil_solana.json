@@ -1,0 +1,5654 @@
+{
+  "address": "RXo7Ai9ugeBp9giAKqera2pg1xMj49exA5SgWdMBMuM",
+  "metadata": {
+    "name": "pencil_solana",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "approve_asset_pool",
+      "discriminator": [
+        240,
+        141,
+        145,
+        219,
+        82,
+        141,
+        53,
+        129
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "creator",
+          "type": "pubkey"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "burn_grow_token",
+      "discriminator": [
+        174,
+        79,
+        45,
+        27,
+        45,
+        121,
+        44,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "grow_token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool"
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grow_token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "cancel_asset_pool",
+      "discriminator": [
+        20,
+        79,
+        53,
+        120,
+        31,
+        135,
+        11,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "pool_vault",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_junior_interest",
+      "discriminator": [
+        101,
+        78,
+        157,
+        190,
+        168,
+        212,
+        158,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "junior_interest_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  105,
+                  110,
+                  116,
+                  101,
+                  114,
+                  101,
+                  115,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nft_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_nft_account",
+          "writable": true
+        },
+        {
+          "name": "junior_nft_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_asset_account",
+          "writable": true
+        },
+        {
+          "name": "asset_pool_vault",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "nft_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "complete_funding",
+      "discriminator": [
+        142,
+        83,
+        61,
+        200,
+        110,
+        57,
+        199,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "senior_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_asset_pool",
+      "discriminator": [
+        25,
+        139,
+        122,
+        214,
+        3,
+        64,
+        63,
+        181
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_whitelist",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  108,
+                  105,
+                  115,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "payer"
+              },
+              {
+                "kind": "arg",
+                "path": "name"
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_address",
+          "docs": [
+            "资产代币地址"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "platform_fee",
+          "type": "u16"
+        },
+        {
+          "name": "senior_early_before_exit_fee",
+          "type": "u16"
+        },
+        {
+          "name": "senior_early_after_exit_fee",
+          "type": "u16"
+        },
+        {
+          "name": "junior_early_before_exit_fee",
+          "type": "u16"
+        },
+        {
+          "name": "min_junior_ratio",
+          "type": "u16"
+        },
+        {
+          "name": "repayment_rate",
+          "type": "u16"
+        },
+        {
+          "name": "senior_fixed_rate",
+          "type": "u16"
+        },
+        {
+          "name": "repayment_period",
+          "type": "u64"
+        },
+        {
+          "name": "repayment_count",
+          "type": "u64"
+        },
+        {
+          "name": "total_amount",
+          "type": "u64"
+        },
+        {
+          "name": "min_amount",
+          "type": "u64"
+        },
+        {
+          "name": "funding_start_time",
+          "type": "i64"
+        },
+        {
+          "name": "funding_end_time",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "distribute_junior_nft",
+      "discriminator": [
+        0,
+        254,
+        209,
+        124,
+        76,
+        72,
+        138,
+        50
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        },
+        {
+          "name": "junior_nft_mint",
+          "docs": [
+            "Junior NFT Mint PDA - 每个 NFT 有独立的 Mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user"
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "junior_nft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "nft_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nft_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "distribute_senior_token",
+      "discriminator": [
+        24,
+        134,
+        198,
+        134,
+        93,
+        92,
+        222,
+        198
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        },
+        {
+          "name": "grow_token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user"
+        },
+        {
+          "name": "user_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grow_token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "early_exit_senior",
+      "discriminator": [
+        186,
+        7,
+        177,
+        116,
+        250,
+        140,
+        100,
+        104
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "senior_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grow_token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_grow_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_asset_account",
+          "writable": true
+        },
+        {
+          "name": "asset_pool_vault",
+          "writable": true
+        },
+        {
+          "name": "treasury_ata",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "finalize_token_distribution",
+      "discriminator": [
+        158,
+        131,
+        100,
+        20,
+        34,
+        208,
+        236,
+        74
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool"
+        }
+      ],
+      "args": [
+        {
+          "name": "senior_count",
+          "type": "u64"
+        },
+        {
+          "name": "junior_count",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_related_accounts",
+      "discriminator": [
+        127,
+        200,
+        3,
+        223,
+        65,
+        26,
+        232,
+        37
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "asset_mint",
+          "docs": [
+            "资产代币 Mint"
+          ]
+        },
+        {
+          "name": "funding",
+          "docs": [
+            "Funding PDA 账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  117,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "senior_pool",
+          "docs": [
+            "SeniorPool PDA 账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "docs": [
+            "FirstLossPool PDA 账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "junior_interest_pool",
+          "docs": [
+            "JuniorInterestPool PDA 账户"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  105,
+                  110,
+                  116,
+                  101,
+                  114,
+                  101,
+                  115,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grow_token_mint",
+          "docs": [
+            "GROW Token Mint PDA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "junior_nft_mint",
+          "docs": [
+            "Junior NFT Mint PDA (用作基础 mint，实际 NFT 会有独立的 mint)"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool_vault",
+          "docs": [
+            "资产池 Token Vault ATA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "treasury",
+          "docs": [
+            "金库账户 (从 SystemConfig 读取)"
+          ]
+        },
+        {
+          "name": "treasury_ata",
+          "docs": [
+            "金库 ATA"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "treasury"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "rent",
+          "address": "SysvarRent111111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_system_config",
+      "discriminator": [
+        43,
+        153,
+        196,
+        116,
+        233,
+        36,
+        208,
+        246
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury",
+          "docs": [
+            "金库账户"
+          ],
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "platform_fee_rate",
+          "type": "u16"
+        },
+        {
+          "name": "senior_early_before_exit_fee_rate",
+          "type": "u16"
+        },
+        {
+          "name": "senior_early_after_exit_fee_rate",
+          "type": "u16"
+        },
+        {
+          "name": "junior_early_before_exit_fee_rate",
+          "type": "u16"
+        },
+        {
+          "name": "default_min_junior_ratio",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "mint_grow_token",
+      "discriminator": [
+        17,
+        195,
+        170,
+        88,
+        160,
+        13,
+        221,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grow_token_mint",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  111,
+                  119,
+                  95,
+                  116,
+                  111,
+                  107,
+                  101,
+                  110,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "grow_token_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "mint_junior_nft",
+      "discriminator": [
+        41,
+        235,
+        58,
+        29,
+        24,
+        231,
+        244,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "junior_nft_mint",
+          "docs": [
+            "Junior NFT Mint PDA - 每个 NFT 有独立的 Mint"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "recipient"
+        },
+        {
+          "name": "recipient_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "recipient"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "junior_nft_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "nft_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nft_id",
+          "type": "u64"
+        },
+        {
+          "name": "principal",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "pause_system",
+      "discriminator": [
+        61,
+        33,
+        120,
+        81,
+        219,
+        224,
+        186,
+        28
+      ],
+      "accounts": [
+        {
+          "name": "super_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "process_refund",
+      "discriminator": [
+        207,
+        200,
+        62,
+        144,
+        204,
+        189,
+        222,
+        226
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        },
+        {
+          "name": "pool_vault",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "refund_subscription",
+      "discriminator": [
+        31,
+        146,
+        27,
+        46,
+        118,
+        79,
+        66,
+        191
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "subscription_type",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "repay",
+      "discriminator": [
+        234,
+        103,
+        67,
+        82,
+        208,
+        234,
+        219,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_whitelist",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  108,
+                  105,
+                  115,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "senior_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "junior_interest_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  105,
+                  110,
+                  116,
+                  101,
+                  114,
+                  101,
+                  115,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "payer_token_account",
+          "writable": true
+        },
+        {
+          "name": "asset_pool_vault",
+          "writable": true
+        },
+        {
+          "name": "treasury_ata",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "repayment_record",
+          "docs": [
+            "Repayment record - one per period"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  101,
+                  112,
+                  97,
+                  121,
+                  109,
+                  101,
+                  110,
+                  116,
+                  95,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "period"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "period",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_asset_supported",
+      "discriminator": [
+        81,
+        182,
+        114,
+        225,
+        217,
+        107,
+        120,
+        93
+      ],
+      "accounts": [
+        {
+          "name": "system_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_whitelist",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  108,
+                  105,
+                  115,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "asset",
+          "type": "pubkey"
+        },
+        {
+          "name": "supported",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "set_treasury",
+      "discriminator": [
+        57,
+        97,
+        196,
+        95,
+        195,
+        206,
+        106,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "system_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "treasury",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "subscribe_junior",
+      "discriminator": [
+        197,
+        150,
+        82,
+        182,
+        216,
+        198,
+        135,
+        137
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_whitelist",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  108,
+                  105,
+                  115,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "pool_token_account",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "subscribe_senior",
+      "discriminator": [
+        47,
+        102,
+        28,
+        1,
+        246,
+        75,
+        51,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_whitelist",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  108,
+                  105,
+                  115,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "pool_token_account",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  101,
+                  110,
+                  105,
+                  111,
+                  114
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unpause_system",
+      "discriminator": [
+        26,
+        131,
+        200,
+        89,
+        124,
+        244,
+        140,
+        236
+      ],
+      "accounts": [
+        {
+          "name": "super_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "update_admin",
+      "discriminator": [
+        161,
+        176,
+        40,
+        213,
+        60,
+        184,
+        179,
+        228
+      ],
+      "accounts": [
+        {
+          "name": "super_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "role",
+          "type": {
+            "defined": {
+              "name": "AdminRole"
+            }
+          }
+        },
+        {
+          "name": "new_admin",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "update_fee_rate",
+      "discriminator": [
+        195,
+        241,
+        226,
+        216,
+        102,
+        1,
+        5,
+        122
+      ],
+      "accounts": [
+        {
+          "name": "system_admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "fee_type",
+          "type": {
+            "defined": {
+              "name": "FeeType"
+            }
+          }
+        },
+        {
+          "name": "new_rate",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_junior_subscription",
+      "discriminator": [
+        71,
+        77,
+        54,
+        90,
+        7,
+        25,
+        31,
+        130
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        },
+        {
+          "name": "pool_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "treasury_ata",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "treasury"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_principal",
+      "discriminator": [
+        6,
+        59,
+        175,
+        16,
+        210,
+        146,
+        119,
+        63
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  115,
+                  115,
+                  101,
+                  116,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.creator",
+                "account": "AssetPool"
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool.name",
+                "account": "AssetPool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "first_loss_pool",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  114,
+                  115,
+                  116,
+                  95,
+                  108,
+                  111,
+                  115,
+                  115,
+                  95,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              }
+            ]
+          }
+        },
+        {
+          "name": "nft_metadata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  101,
+                  116,
+                  97,
+                  100,
+                  97,
+                  116,
+                  97
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_nft_account",
+          "writable": true
+        },
+        {
+          "name": "junior_nft_mint",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  106,
+                  117,
+                  110,
+                  105,
+                  111,
+                  114,
+                  95,
+                  110,
+                  102,
+                  116,
+                  95,
+                  109,
+                  105,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "asset_pool"
+              },
+              {
+                "kind": "arg",
+                "path": "nft_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_asset_account",
+          "writable": true
+        },
+        {
+          "name": "asset_pool_vault",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "nft_id",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "withdraw_senior_subscription",
+      "discriminator": [
+        116,
+        153,
+        205,
+        101,
+        184,
+        234,
+        66,
+        105
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  121,
+                  115,
+                  116,
+                  101,
+                  109,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset_pool",
+          "writable": true
+        },
+        {
+          "name": "subscription",
+          "writable": true
+        },
+        {
+          "name": "pool_token_account",
+          "writable": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "treasury_ata",
+          "writable": true
+        },
+        {
+          "name": "asset_mint"
+        },
+        {
+          "name": "treasury"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AssetPool",
+      "discriminator": [
+        81,
+        48,
+        2,
+        215,
+        147,
+        255,
+        152,
+        112
+      ]
+    },
+    {
+      "name": "AssetWhitelist",
+      "discriminator": [
+        105,
+        100,
+        133,
+        187,
+        165,
+        205,
+        77,
+        206
+      ]
+    },
+    {
+      "name": "FirstLossPool",
+      "discriminator": [
+        232,
+        63,
+        126,
+        121,
+        212,
+        77,
+        194,
+        181
+      ]
+    },
+    {
+      "name": "Funding",
+      "discriminator": [
+        50,
+        175,
+        214,
+        196,
+        200,
+        110,
+        145,
+        161
+      ]
+    },
+    {
+      "name": "JuniorInterestPool",
+      "discriminator": [
+        239,
+        45,
+        95,
+        52,
+        21,
+        175,
+        87,
+        193
+      ]
+    },
+    {
+      "name": "JuniorNFTMetadata",
+      "discriminator": [
+        69,
+        9,
+        208,
+        120,
+        105,
+        109,
+        113,
+        125
+      ]
+    },
+    {
+      "name": "RepaymentRecord",
+      "discriminator": [
+        194,
+        187,
+        97,
+        21,
+        42,
+        0,
+        189,
+        162
+      ]
+    },
+    {
+      "name": "SeniorPool",
+      "discriminator": [
+        60,
+        12,
+        54,
+        67,
+        1,
+        156,
+        90,
+        115
+      ]
+    },
+    {
+      "name": "Subscription",
+      "discriminator": [
+        64,
+        7,
+        26,
+        135,
+        102,
+        132,
+        98,
+        33
+      ]
+    },
+    {
+      "name": "SystemConfig",
+      "discriminator": [
+        218,
+        150,
+        16,
+        126,
+        102,
+        185,
+        75,
+        1
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AdminUpdated",
+      "discriminator": [
+        69,
+        82,
+        49,
+        171,
+        43,
+        3,
+        80,
+        161
+      ]
+    },
+    {
+      "name": "AssetSupportUpdated",
+      "discriminator": [
+        115,
+        248,
+        105,
+        199,
+        219,
+        94,
+        75,
+        142
+      ]
+    },
+    {
+      "name": "EarlyExitProcessed",
+      "discriminator": [
+        26,
+        228,
+        175,
+        113,
+        92,
+        25,
+        155,
+        234
+      ]
+    },
+    {
+      "name": "FeeRateUpdated",
+      "discriminator": [
+        90,
+        28,
+        42,
+        224,
+        39,
+        78,
+        81,
+        27
+      ]
+    },
+    {
+      "name": "InterestClaimed",
+      "discriminator": [
+        207,
+        228,
+        188,
+        90,
+        131,
+        122,
+        6,
+        125
+      ]
+    },
+    {
+      "name": "PrincipalWithdrawn",
+      "discriminator": [
+        156,
+        68,
+        7,
+        220,
+        207,
+        134,
+        122,
+        12
+      ]
+    },
+    {
+      "name": "RefundProcessed",
+      "discriminator": [
+        203,
+        88,
+        236,
+        233,
+        192,
+        178,
+        57,
+        161
+      ]
+    },
+    {
+      "name": "RelatedAccountsInitialized",
+      "discriminator": [
+        104,
+        194,
+        128,
+        60,
+        48,
+        141,
+        121,
+        191
+      ]
+    },
+    {
+      "name": "RepaymentDistributed",
+      "discriminator": [
+        204,
+        36,
+        66,
+        245,
+        248,
+        101,
+        151,
+        187
+      ]
+    },
+    {
+      "name": "SystemPaused",
+      "discriminator": [
+        199,
+        92,
+        193,
+        5,
+        14,
+        241,
+        182,
+        17
+      ]
+    },
+    {
+      "name": "SystemUnpaused",
+      "discriminator": [
+        29,
+        28,
+        211,
+        10,
+        79,
+        179,
+        175,
+        13
+      ]
+    },
+    {
+      "name": "TokensDistributed",
+      "discriminator": [
+        117,
+        252,
+        224,
+        3,
+        212,
+        156,
+        207,
+        43
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidSystemConfig",
+      "msg": "Invalid system configuration"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidAssetPool",
+      "msg": "Invalid asset pool"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidFundingParams",
+      "msg": "Invalid funding parameters"
+    },
+    {
+      "code": 6003,
+      "name": "FundingNotStarted",
+      "msg": "Funding not started"
+    },
+    {
+      "code": 6004,
+      "name": "FundingEnded",
+      "msg": "Funding already ended"
+    },
+    {
+      "code": 6005,
+      "name": "FundingNotCompleted",
+      "msg": "Funding not completed"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidSubscriptionAmount",
+      "msg": "Invalid subscription amount"
+    },
+    {
+      "code": 6007,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient balance"
+    },
+    {
+      "code": 6008,
+      "name": "InsufficientSeniorAmount",
+      "msg": "Insufficient senior amount"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientJuniorAmount",
+      "msg": "Insufficient junior amount"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidJuniorRatio",
+      "msg": "Invalid junior ratio"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidRepaymentAmount",
+      "msg": "Invalid repayment amount"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidRepaymentPeriod",
+      "msg": "Invalid repayment period"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidRepaymentCount",
+      "msg": "Invalid repayment count"
+    },
+    {
+      "code": 6014,
+      "name": "RepaymentNotDue",
+      "msg": "Repayment not due"
+    },
+    {
+      "code": 6015,
+      "name": "RepaymentAlreadyCompleted",
+      "msg": "Repayment already completed"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidEarlyExitFee",
+      "msg": "Invalid early exit fee"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidPlatformFee",
+      "msg": "Invalid platform fee"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidSeniorFixedRate",
+      "msg": "Invalid senior fixed rate"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidRepaymentRate",
+      "msg": "Invalid repayment rate"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidMinJuniorRatio",
+      "msg": "Invalid min junior ratio"
+    },
+    {
+      "code": 6021,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6022,
+      "name": "InvalidAccount",
+      "msg": "Invalid account"
+    },
+    {
+      "code": 6023,
+      "name": "InvalidTokenAccount",
+      "msg": "Invalid token account"
+    },
+    {
+      "code": 6024,
+      "name": "InvalidMint",
+      "msg": "Invalid mint"
+    },
+    {
+      "code": 6025,
+      "name": "TransferFailed",
+      "msg": "Transfer failed"
+    },
+    {
+      "code": 6026,
+      "name": "MintFailed",
+      "msg": "Mint failed"
+    },
+    {
+      "code": 6027,
+      "name": "BurnFailed",
+      "msg": "Burn failed"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidNFT",
+      "msg": "Invalid NFT"
+    },
+    {
+      "code": 6029,
+      "name": "NFTAlreadyClaimed",
+      "msg": "NFT already claimed"
+    },
+    {
+      "code": 6030,
+      "name": "InvalidSubscriptionStatus",
+      "msg": "Invalid subscription status"
+    },
+    {
+      "code": 6031,
+      "name": "InvalidAssetPoolStatus",
+      "msg": "Invalid asset pool status"
+    },
+    {
+      "code": 6032,
+      "name": "AssetPoolAlreadyApproved",
+      "msg": "Asset pool already approved"
+    },
+    {
+      "code": 6033,
+      "name": "AssetPoolNotApproved",
+      "msg": "Asset pool not approved"
+    },
+    {
+      "code": 6034,
+      "name": "FundingTargetNotMet",
+      "msg": "Funding target not met"
+    },
+    {
+      "code": 6035,
+      "name": "FundingMinimumNotMet",
+      "msg": "Funding minimum not met"
+    },
+    {
+      "code": 6036,
+      "name": "InvalidTimeParameters",
+      "msg": "Invalid time parameters"
+    },
+    {
+      "code": 6037,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6038,
+      "name": "InvalidPoolAddress",
+      "msg": "Invalid pool address"
+    },
+    {
+      "code": 6039,
+      "name": "InvalidTreasuryAddress",
+      "msg": "Invalid treasury address"
+    },
+    {
+      "code": 6040,
+      "name": "InsufficientPoolFunds",
+      "msg": "Insufficient funds in pool"
+    },
+    {
+      "code": 6041,
+      "name": "InvalidInterestCalculation",
+      "msg": "Invalid interest calculation"
+    },
+    {
+      "code": 6042,
+      "name": "InvalidPrincipalCalculation",
+      "msg": "Invalid principal calculation"
+    },
+    {
+      "code": 6043,
+      "name": "SubscriptionNotFound",
+      "msg": "Subscription not found"
+    },
+    {
+      "code": 6044,
+      "name": "RepaymentRecordNotFound",
+      "msg": "Repayment record not found"
+    },
+    {
+      "code": 6045,
+      "name": "InvalidStringLength",
+      "msg": "Invalid string length"
+    },
+    {
+      "code": 6046,
+      "name": "DuplicateSubscription",
+      "msg": "Duplicate subscription"
+    },
+    {
+      "code": 6047,
+      "name": "InvalidRefundAmount",
+      "msg": "Invalid refund amount"
+    },
+    {
+      "code": 6048,
+      "name": "RefundAlreadyProcessed",
+      "msg": "Refund already processed"
+    },
+    {
+      "code": 6049,
+      "name": "InvalidClaimAmount",
+      "msg": "Invalid claim amount"
+    },
+    {
+      "code": 6050,
+      "name": "NoInterestToClaim",
+      "msg": "No interest to claim"
+    },
+    {
+      "code": 6051,
+      "name": "NoPrincipalToWithdraw",
+      "msg": "No principal to withdraw"
+    },
+    {
+      "code": 6052,
+      "name": "InvalidEarlyExitAmount",
+      "msg": "Invalid early exit amount"
+    },
+    {
+      "code": 6053,
+      "name": "EarlyExitNotAllowed",
+      "msg": "Early exit not allowed"
+    },
+    {
+      "code": 6054,
+      "name": "InvalidTokenDecimals",
+      "msg": "Invalid token decimals"
+    },
+    {
+      "code": 6055,
+      "name": "PrecisionLoss",
+      "msg": "Precision loss in calculation"
+    },
+    {
+      "code": 6056,
+      "name": "SystemPaused",
+      "msg": "System is paused"
+    },
+    {
+      "code": 6057,
+      "name": "InvalidAdminRole",
+      "msg": "Invalid admin role"
+    },
+    {
+      "code": 6058,
+      "name": "InvalidFeeType",
+      "msg": "Invalid fee type"
+    },
+    {
+      "code": 6059,
+      "name": "AssetNotSupported",
+      "msg": "Asset not in whitelist"
+    },
+    {
+      "code": 6060,
+      "name": "RelatedAccountsAlreadyInitialized",
+      "msg": "Related accounts already initialized"
+    },
+    {
+      "code": 6061,
+      "name": "RelatedAccountsNotInitialized",
+      "msg": "Related accounts not initialized"
+    },
+    {
+      "code": 6062,
+      "name": "InsufficientVaultBalance",
+      "msg": "Insufficient vault balance"
+    },
+    {
+      "code": 6063,
+      "name": "InvalidEarlyExitTiming",
+      "msg": "Invalid early exit timing"
+    },
+    {
+      "code": 6064,
+      "name": "NFTNotOwnedByUser",
+      "msg": "NFT not owned by user"
+    },
+    {
+      "code": 6065,
+      "name": "PrincipalAlreadyWithdrawn",
+      "msg": "Principal already withdrawn"
+    },
+    {
+      "code": 6066,
+      "name": "PoolNotEnded",
+      "msg": "Pool not ended"
+    },
+    {
+      "code": 6067,
+      "name": "InvalidPeriodCalculation",
+      "msg": "Invalid period calculation"
+    }
+  ],
+  "types": [
+    {
+      "name": "AdminRole",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "SuperAdmin"
+          },
+          {
+            "name": "SystemAdmin"
+          },
+          {
+            "name": "TreasuryAdmin"
+          },
+          {
+            "name": "OperationAdmin"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AdminUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "role",
+            "type": "u8"
+          },
+          {
+            "name": "old_admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "new_admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetPool",
+      "docs": [
+        "资产池账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "docs": [
+              "资产池名称"
+            ],
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "资产池状态"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "asset_address",
+            "docs": [
+              "资产代币地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "system_config",
+            "docs": [
+              "系统配置地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "funding",
+            "docs": [
+              "募资合约地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "senior_pool",
+            "docs": [
+              "优先池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "first_loss_pool",
+            "docs": [
+              "首损池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "junior_interest_pool",
+            "docs": [
+              "利息池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "grow_token",
+            "docs": [
+              "GROW Token 地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "junior_nft",
+            "docs": [
+              "Junior NFT 地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "docs": [
+              "金库地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_fee",
+            "docs": [
+              "平台手续费 (基点)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "senior_early_before_exit_fee",
+            "docs": [
+              "优先份额募资结束前提前退出手续费"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "senior_early_after_exit_fee",
+            "docs": [
+              "优先份额募资结束后提前退出手续费"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "junior_early_before_exit_fee",
+            "docs": [
+              "次级份额募资结束前提前退出手续费"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "min_junior_ratio",
+            "docs": [
+              "最低 Junior 占比"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "repayment_rate",
+            "docs": [
+              "还款利率 (基点)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "senior_fixed_rate",
+            "docs": [
+              "优先份额固定利率 (基点)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "repayment_period",
+            "docs": [
+              "还款周期 (天)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "repayment_count",
+            "docs": [
+              "还款期数"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_amount",
+            "docs": [
+              "预期募资总金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "min_amount",
+            "docs": [
+              "最少募资目标"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "funding_start_time",
+            "docs": [
+              "募资开始时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "funding_end_time",
+            "docs": [
+              "募资结束时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "senior_amount",
+            "docs": [
+              "优先份额金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "junior_amount",
+            "docs": [
+              "次级份额金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "repaid_amount",
+            "docs": [
+              "已还款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "creator",
+            "docs": [
+              "创建者"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "创建时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "related_accounts_initialized",
+            "docs": [
+              "相关账户是否已初始化"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "asset_pool_vault",
+            "docs": [
+              "资产池 Token Vault ATA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_ata",
+            "docs": [
+              "金库 ATA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                63
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetSupportUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset",
+            "type": "pubkey"
+          },
+          {
+            "name": "supported",
+            "type": "bool"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AssetWhitelist",
+      "docs": [
+        "资产白名单账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "system_config",
+            "docs": [
+              "系统配置地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "assets",
+            "docs": [
+              "支持的资产列表"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "EarlyExitProcessed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "fee",
+            "type": "u64"
+          },
+          {
+            "name": "net_amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeRateUpdated",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fee_type",
+            "type": "u8"
+          },
+          {
+            "name": "old_rate",
+            "type": "u16"
+          },
+          {
+            "name": "new_rate",
+            "type": "u16"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FeeType",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "PlatformFee"
+          },
+          {
+            "name": "SeniorEarlyBeforeExitFee"
+          },
+          {
+            "name": "SeniorEarlyAfterExitFee"
+          },
+          {
+            "name": "JuniorEarlyBeforeExitFee"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FirstLossPool",
+      "docs": [
+        "首损池账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "junior_nft",
+            "docs": [
+              "Junior NFT 地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_deposits",
+            "docs": [
+              "总存款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "repaid_amount",
+            "docs": [
+              "已还款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Funding",
+      "docs": [
+        "募资账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "asset_address",
+            "docs": [
+              "资产代币地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "senior_total",
+            "docs": [
+              "优先份额总认购金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "junior_total",
+            "docs": [
+              "次级份额总认购金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "募资状态"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "InterestClaimed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nft_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "JuniorInterestPool",
+      "docs": [
+        "利息池账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "junior_nft",
+            "docs": [
+              "Junior NFT 地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_interest",
+            "docs": [
+              "总利息金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "distributed_interest",
+            "docs": [
+              "已分配利息"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "JuniorNFTMetadata",
+      "docs": [
+        "Junior NFT 元数据"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nft_id",
+            "docs": [
+              "NFT ID"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "docs": [
+              "所有者地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "principal",
+            "docs": [
+              "本金金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claimed_interest",
+            "docs": [
+              "已领取利息"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "principal_withdrawn",
+            "docs": [
+              "是否已提取本金"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "created_at",
+            "docs": [
+              "创建时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PrincipalWithdrawn",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "nft_id",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RefundProcessed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "subscription_type",
+            "type": "u8"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RelatedAccountsInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "funding",
+            "type": "pubkey"
+          },
+          {
+            "name": "senior_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "first_loss_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "junior_interest_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "grow_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "asset_pool_vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_ata",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RepaymentDistributed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "period",
+            "type": "u64"
+          },
+          {
+            "name": "total_amount",
+            "type": "u64"
+          },
+          {
+            "name": "platform_fee",
+            "type": "u64"
+          },
+          {
+            "name": "senior_amount",
+            "type": "u64"
+          },
+          {
+            "name": "junior_interest",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RepaymentRecord",
+      "docs": [
+        "还款记录"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "period",
+            "docs": [
+              "还款期数"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "还款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "repaid_at",
+            "docs": [
+              "还款时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "还款状态"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SeniorPool",
+      "docs": [
+        "优先池账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "grow_token",
+            "docs": [
+              "GROW Token 地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_deposits",
+            "docs": [
+              "总存款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "repaid_amount",
+            "docs": [
+              "已还款金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Subscription",
+      "docs": [
+        "用户订阅记录"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "docs": [
+              "资产池地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "docs": [
+              "用户地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "subscription_type",
+            "docs": [
+              "订阅类型 (0: senior, 1: junior)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "订阅金额"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "docs": [
+              "订阅状态"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "subscribed_at",
+            "docs": [
+              "订阅时间"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                128
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SystemConfig",
+      "docs": [
+        "系统配置账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "super_admin",
+            "docs": [
+              "超级管理员"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "system_admin",
+            "docs": [
+              "系统管理员"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_admin",
+            "docs": [
+              "金库管理员"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "operation_admin",
+            "docs": [
+              "运营管理员"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury",
+            "docs": [
+              "金库地址"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "platform_fee_rate",
+            "docs": [
+              "平台手续费率 (基点)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "senior_early_before_exit_fee_rate",
+            "docs": [
+              "优先份额募资结束前提前退出手续费率"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "senior_early_after_exit_fee_rate",
+            "docs": [
+              "优先份额募资结束后提前退出手续费率"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "junior_early_before_exit_fee_rate",
+            "docs": [
+              "次级份额募资结束前提前退出手续费率"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "default_min_junior_ratio",
+            "docs": [
+              "默认最低 Junior 占比"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "initialized",
+            "docs": [
+              "是否已初始化"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "paused",
+            "docs": [
+              "系统暂停状态"
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "_reserved",
+            "docs": [
+              "预留空间"
+            ],
+            "type": {
+              "array": [
+                "u8",
+                127
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "SystemPaused",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SystemUnpaused",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokensDistributed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "asset_pool",
+            "type": "pubkey"
+          },
+          {
+            "name": "senior_amount",
+            "type": "u64"
+          },
+          {
+            "name": "junior_count",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ]
+}

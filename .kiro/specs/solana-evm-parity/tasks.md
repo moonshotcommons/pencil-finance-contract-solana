@@ -1,0 +1,151 @@
+# Implementation Plan
+
+- [x] 1. 增强 SystemConfig 实现系统治理功能
+  - 在 SystemConfig 结构体中添加 `paused: bool` 字段
+  - 实现 `update_admin` 指令，支持更新四种管理员角色（super_admin, system_admin, treasury_admin, operation_admin）
+  - 实现 `pause_system` 和 `unpause_system` 指令
+  - 实现 `update_fee_rate` 指令，支持更新各类费率参数
+  - 实现 `set_treasury` 指令设置金库地址
+  - 在所有关键指令中添加系统暂停状态检查
+  - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.1, 3.2, 3.3, 3.4, 3.5_
+
+- [x] 2. 实现资产白名单管理
+  - 创建 `AssetWhitelist` 账户结构体，包含 `system_config` 和 `assets: Vec<Pubkey>` 字段
+  - 实现 `set_asset_supported` 指令，支持添加/移除白名单资产
+  - 在 `create_asset_pool` 指令中添加资产白名单验证
+  - 在 `subscribe_senior` 和 `subscribe_junior` 指令中添加资产白名单验证
+  - 在 `repay` 指令中添加资产白名单验证
+  - _Requirements: 2.1, 2.2, 2.3, 2.4_
+
+- [x] 3. 实现工厂化账户初始化
+  - 创建 `initialize_related_accounts` 指令
+  - 在指令中创建 Funding PDA 账户
+  - 在指令中创建 SeniorPool PDA 账户
+  - 在指令中创建 FirstLossPool PDA 账户
+  - 在指令中创建 JuniorInterestPool PDA 账户
+  - 在指令中创建 GROW Token SPL Mint PDA
+  - 在指令中创建 Junior NFT SPL Mint PDA
+  - 在指令中创建资产池 Token Vault ATA
+  - 在指令中创建金库 ATA
+  - 将所有账户地址写入 AssetPool 结构体
+  - 发出 `RelatedAccountsInitialized` 事件
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9_
+
+- [x] 4. 实现募资完成与代币分发
+  - 修改 `complete_funding` 指令，添加代币分发逻辑
+  - 实现遍历所有 Senior Subscription 账户的逻辑
+  - 为每个 Senior 投资者铸造 GROW Token（使用 SPL Token Program CPI）
+  - 实现遍历所有 Junior Subscription 账户的逻辑
+  - 为每个 Junior 投资者铸造 NFT（使用 SPL Token Program CPI）
+  - 创建 JuniorNFTMetadata PDA 账户记录本金金额
+  - 将 GROW Token 转入 Senior 投资者的 ATA
+  - 更新 AssetPool 状态为 FUNDED
+  - 发出 `TokensDistributed` 事件
+  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+
+- [x] 5. 实现募资失败退款机制
+  - 创建 `process_refund` 指令
+  - 验证募资失败条件（未达到 min_amount 或 Junior 占比不足）
+  - 从资产池 Vault 转账至用户 ATA
+  - 验证转账金额等于用户的认购金额
+  - 更新 Subscription 状态为 REFUNDED
+  - 实现检查所有认购都已退款的逻辑
+  - 允许将 AssetPool 状态更新为 CANCELLED
+  - 发出 `RefundProcessed` 事件
+  - _Requirements: 6.1, 6.2, 6.3, 6.4_
+
+- [x] 6. 实现还款资金分配逻辑
+  - 修改 `repay` 指令，实现完整的资金分配逻辑
+  - 实现计算当前应还期数的函数
+  - 实现计算平台费的逻辑（每期应还金额 × 平台费率）
+  - 转账平台费至金库 ATA
+  - 实现计算 Senior 应得本息的逻辑（本金/期数 + 本金 × Senior 固定利率）
+  - 分配 Senior 应得本息至 SeniorPool
+  - 实现 FirstLossPool 补足差额的逻辑（当 Senior 应得金额不足时）
+  - 计算剩余金额并分配至 JuniorInterestPool
+  - 创建 RepaymentRecord 并记录期数
+  - 发出 `RepaymentDistributed` 事件
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6_
+
+- [x] 7. 实现 Senior 早退机制
+  - 创建 `early_exit_senior` 指令
+  - 验证募资已完成（AssetPool 状态为 FUNDED）
+  - 实现根据时间计算早退费率的逻辑（募资结束前/后使用不同费率）
+  - 销毁用户的 GROW Token（使用 SPL Token Program CPI）
+  - 计算净退款金额（amount - amount × 早退费率）
+  - 转账早退费用至金库 ATA
+  - 转账净退款金额至用户 ATA
+  - 实现从 FirstLossPool 请求补足的逻辑（当资产池 Vault 余额不足时）
+  - 发出 `EarlyExitProcessed` 事件
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
+
+- [x] 8. 实现 Junior 利息领取
+  - 创建 `claim_junior_interest` 指令
+  - 验证用户持有 Junior NFT（检查 NFT 所有权）
+  - 从 JuniorInterestPool 计算可领取利息（总额 × NFT 本金 / Junior 总本金 - 已领取）
+  - 转账利息至用户 ATA
+  - 更新 JuniorInterestPool 的已领取金额
+  - 更新 JuniorNFTMetadata 的 claimed_interest 字段
+  - 发出 `InterestClaimed` 事件
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+- [x] 9. 实现 Junior 本金提取
+  - 创建 `withdraw_junior_principal` 指令
+  - 验证 AssetPool 状态为 ENDED
+  - 验证用户持有 Junior NFT
+  - 验证用户未提取过本金（检查 principal_withdrawn 字段）
+  - 从 JuniorNFTMetadata 读取本金金额
+  - 从 FirstLossPool 转账本金至用户 ATA
+  - 标记 JuniorNFTMetadata.principal_withdrawn = true
+  - 发出 `PrincipalWithdrawn` 事件
+  - _Requirements: 10.1, 10.2, 10.3, 10.4, 10.5, 10.6_
+
+- [x] 10. 完善 SPL 代币与 NFT 实现
+  - 实现 GROW Token Mint 创建逻辑（PDA seeds: [b"grow_token_mint", asset_pool.key()]）
+  - 设置 GROW Token Mint Authority 为 AssetPool PDA
+  - 设置 GROW Token decimals 与资产代币一致
+  - 实现 Junior NFT Mint 创建逻辑（PDA seeds: [b"junior_nft_mint", asset_pool.key(), nft_id]）
+  - 设置 Junior NFT Mint Authority 为 AssetPool PDA
+  - 设置 Junior NFT supply 为 1
+  - 实现 mint_to 操作（募资完成时铸造）
+  - 实现 burn 操作（早退时销毁 GROW Token）
+  - _Requirements: 11.1, 11.2, 11.3, 11.4, 11.5, 11.6_
+
+- [x] 11. 实现事件日志记录
+  - 定义 `AdminUpdated` 事件结构体
+  - 定义 `SystemPaused` 和 `SystemUnpaused` 事件结构体
+  - 定义 `FeeRateUpdated` 事件结构体
+  - 定义 `AssetSupportUpdated` 事件结构体
+  - 定义 `RelatedAccountsInitialized` 事件结构体
+  - 定义 `TokensDistributed` 事件结构体
+  - 定义 `RefundProcessed` 事件结构体
+  - 定义 `RepaymentDistributed` 事件结构体
+  - 定义 `EarlyExitProcessed` 事件结构体
+  - 定义 `InterestClaimed` 事件结构体
+  - 定义 `PrincipalWithdrawn` 事件结构体
+  - 在所有关键操作中发出相应事件
+  - _Requirements: 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8_
+
+- [x] 12. 添加错误处理和验证
+  - 添加 `SystemPaused` 错误类型
+  - 添加 `AssetNotSupported` 错误类型
+  - 添加 `RelatedAccountsAlreadyInitialized` 错误类型
+  - 添加 `RelatedAccountsNotInitialized` 错误类型
+  - 添加 `FundingTargetNotMet` 错误类型
+  - 添加 `InsufficientVaultBalance` 错误类型
+  - 添加 `InvalidEarlyExitTiming` 错误类型
+  - 添加 `NFTNotOwnedByUser` 错误类型
+  - 添加 `PrincipalAlreadyWithdrawn` 错误类型
+  - 添加 `PoolNotEnded` 错误类型
+  - 添加 `InvalidPeriodCalculation` 错误类型
+  - 在所有指令中添加适当的错误检查和验证
+
+- [x] 13. 集成测试和文档
+  - 编写完整流程的集成测试（创建 → 初始化 → 募资 → 还款 → 提取）
+  - 编写募资失败退款场景测试
+  - 编写 Senior 早退场景测试
+  - 编写系统暂停场景测试
+  - 编写多用户并发认购测试
+  - 编写多用户并发提取测试
+  - 更新 README 文档说明新功能
+  - 编写 API 文档说明所有新增指令
