@@ -333,18 +333,18 @@ use crate::state::AssetWhitelist;
 #[derive(Accounts)]
 pub struct SetAssetSupported<'info> {
     #[account(mut)]
-    pub system_admin: Signer<'info>,
+    pub operation_admin: Signer<'info>,
 
     #[account(
         seeds = [seeds::SYSTEM_CONFIG],
         bump,
-        constraint = system_config.system_admin == system_admin.key() @ PencilError::Unauthorized
+        constraint = system_config.operation_admin == operation_admin.key() @ PencilError::Unauthorized
     )]
     pub system_config: Account<'info, SystemConfig>,
 
     #[account(
         init_if_needed,
-        payer = system_admin,
+        payer = operation_admin,
         space = 8 + 32 + 4 + (32 * 100), // 账户头 + system_config + Vec长度 + 最多100个资产
         seeds = [seeds::ASSET_WHITELIST],
         bump

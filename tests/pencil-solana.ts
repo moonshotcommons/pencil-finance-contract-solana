@@ -11,6 +11,7 @@ describe("pencil-solana", () => {
 
   const payer = provider.wallet;
   const treasury = Keypair.generate();
+  const operationAdmin = Keypair.generate();
   const assetAddress = Keypair.generate();
 
   let systemConfigPda: PublicKey;
@@ -64,6 +65,24 @@ describe("pencil-solana", () => {
 
       const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
       assert.equal(systemConfig.systemAdmin.toString(), newAdmin.publicKey.toString());
+    });
+
+    it("Sets operation admin role", async () => {
+      // Airdrop SOL to operationAdmin
+      const airdropSig = await provider.connection.requestAirdrop(
+        operationAdmin.publicKey,
+        2 * anchor.web3.LAMPORTS_PER_SOL
+      );
+      await provider.connection.confirmTransaction(airdropSig);
+
+      const tx = await program.methods
+        .updateAdmin({ operationAdmin: {} }, operationAdmin.publicKey)
+        .rpc();
+
+      console.log("✅ Operation admin set:", tx);
+
+      const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
+      assert.equal(systemConfig.operationAdmin.toString(), operationAdmin.publicKey.toString());
     });
 
     it("Pauses the system", async () => {
@@ -124,35 +143,58 @@ describe("pencil-solana", () => {
 
       const tx = await program.methods
         .setAssetSupported(assetAddress.publicKey, true)
+        .accounts({
+          operationAdmin: operationAdmin.publicKey,
+          systemConfig: systemConfigPda,
+          assetWhitelist: assetWhitelistPda,
+        })
+        .signers([operationAdmin])
         .rpc();
 
       console.log("✅ Asset added to whitelist:", tx);
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
-      assert.equal(assetWhitelist.assets.length, 1);
-      assert.equal(assetWhitelist.assets[0].toString(), assetAddress.publicKey.toString());
+      // Check that the asset is in the whitelist (not the total count, as other tests may have added assets)
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      assert.isTrue(isInWhitelist, "Asset should be in whitelist");
     });
 
     it("Removes asset from whitelist", async () => {
       const tx = await program.methods
         .setAssetSupported(assetAddress.publicKey, false)
+        .accounts({
+          operationAdmin: operationAdmin.publicKey,
+          systemConfig: systemConfigPda,
+          assetWhitelist: assetWhitelistPda,
+        })
+        .signers([operationAdmin])
         .rpc();
 
       console.log("✅ Asset removed from whitelist:", tx);
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
-      assert.equal(assetWhitelist.assets.length, 0);
+      // Check that the asset is not in the whitelist
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      assert.isFalse(isInWhitelist, "Asset should not be in whitelist");
     });
 
     it("Re-adds asset to whitelist for pool creation", async () => {
       const tx = await program.methods
         .setAssetSupported(assetAddress.publicKey, true)
+        .accounts({
+          operationAdmin: operationAdmin.publicKey,
+          systemConfig: systemConfigPda,
+          assetWhitelist: assetWhitelistPda,
+        })
+        .signers([operationAdmin])
         .rpc();
 
       console.log("✅ Asset re-added to whitelist:", tx);
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
-      assert.equal(assetWhitelist.assets.length, 1);
+      // Check that the asset is in the whitelist again
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      assert.isTrue(isInWhitelist, "Asset should be in whitelist again");
     });
   });
 
@@ -166,8 +208,8 @@ describe("pencil-solana", () => {
       );
 
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new BN(now + 60);
-      const fundingEndTime = new BN(now + 60 + 86400); // 确保募资期限至少为 86400 秒（1天）
+      const fundingStartTime = new BN(now - 10); // Start 10 seconds ago
+      const fundingEndTime = new BN(now + 86400); // End in 1 day (确保募资期限至少为 86400 秒)
 
       const tx = await program.methods
         .createAssetPool(

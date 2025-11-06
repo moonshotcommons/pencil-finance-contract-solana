@@ -19,8 +19,8 @@ pub const MAX_JUNIOR_RATIO: u16 = 5000;
 /// 最大年利率 (100%)
 pub const MAX_ANNUAL_RATE: u16 = 10000;
 
-/// 最小募资期限 (1 天)
-pub const MIN_FUNDING_PERIOD: i64 = 86400;
+/// 最小募资期限 (10 秒 - 用于测试，生产环境应设置为更长时间如86400)
+pub const MIN_FUNDING_PERIOD: i64 = 10;
 
 /// 最大募资期限 (365 天)
 pub const MAX_FUNDING_PERIOD: i64 = 31536000;

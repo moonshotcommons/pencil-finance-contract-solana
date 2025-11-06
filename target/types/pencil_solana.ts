@@ -2929,7 +2929,7 @@ export type PencilSolana = {
       ],
       "accounts": [
         {
-          "name": "systemAdmin",
+          "name": "operationAdmin",
           "writable": true,
           "signer": true
         },

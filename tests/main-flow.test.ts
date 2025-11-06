@@ -354,19 +354,25 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
       logSuccess("Test skipped - instruction not available");
     });
 
-    it.skip("should add USDT to asset whitelist", async () => {
-      // Note: addAssetToWhitelist instruction not found in program
-      // Using set_asset_supported instead if needed
-      logTestPhase("Skipping USDT whitelist addition", "⏭️");
+    it("should add USDT to asset whitelist", async () => {
+      logTestPhase("Adding USDT to whitelist", "✅");
+
+      const systemConfigPda = deriveSystemConfigPda(program);
+      const assetWhitelistPda = deriveAssetWhitelistPda(program);
 
       const tx = await program.methods
         .setAssetSupported(env.usdtMint, true)
+        .accounts({
+          operationAdmin: env.operationAdmin.publicKey,
+          systemConfig: systemConfigPda,
+          assetWhitelist: assetWhitelistPda,
+        })
+        .signers([env.operationAdmin])
         .rpc();
 
       logTransaction("USDT added to whitelist", tx);
 
       // Verify USDT is in whitelist
-      const assetWhitelistPda = deriveAssetWhitelistPda(program);
       const whitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
       assert.isTrue(
         whitelist.assets.some((asset) => asset.equals(env.usdtMint)),
@@ -379,14 +385,22 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
     it("should add USDC to asset whitelist", async () => {
       logTestPhase("Adding USDC to whitelist", "✅");
 
+      const systemConfigPda = deriveSystemConfigPda(program);
+      const assetWhitelistPda = deriveAssetWhitelistPda(program);
+
       const tx = await program.methods
         .setAssetSupported(env.usdcMint, true)
+        .accounts({
+          operationAdmin: env.operationAdmin.publicKey,
+          systemConfig: systemConfigPda,
+          assetWhitelist: assetWhitelistPda,
+        })
+        .signers([env.operationAdmin])
         .rpc();
 
       logTransaction("USDC added to whitelist", tx);
 
       // Verify USDC is in whitelist
-      const assetWhitelistPda = deriveAssetWhitelistPda(program);
       const whitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
       assert.isTrue(
         whitelist.assets.some((asset) => asset.equals(env.usdcMint)),
@@ -413,10 +427,10 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
         env.treasury.publicKey
       );
 
-      // Funding window: now+60s to now+1d+60s
+      // Funding window: 15 seconds (minimum is 10 seconds per program constants)
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new anchor.BN(now + 60);
-      const fundingEndTime = new anchor.BN(now + 60 + 86400);
+      const fundingStartTime = new anchor.BN(now - 5); // Started 5 seconds ago
+      const fundingEndTime = new anchor.BN(now + 15); // Ends in 15 seconds
 
       const tx = await program.methods
         .createAssetPool(
@@ -702,10 +716,10 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
         env.treasury.publicKey
       );
 
-      // Funding window: now+60s to now+1d+60s
+      // Funding window: starts now, ends in 1 day
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new anchor.BN(now + 60);
-      const fundingEndTime = new anchor.BN(now + 60 + 86400);
+      const fundingStartTime = new anchor.BN(now - 10); // Start 10 seconds ago
+      const fundingEndTime = new anchor.BN(now + 86400); // End in 1 day
 
       const tx = await program.methods
         .createAssetPool(
@@ -1375,16 +1389,20 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
         env.treasury.publicKey
       );
 
-      // Advance time past funding end time
-      const now = Math.floor(Date.now() / 1000);
-      await provider.connection.requestAirdrop(creator, 1_000_000_000); // Ensure payer has SOL
+      // Wait for funding period to end (16 seconds to be safe - funding ends at +15s)
+      logInfo("Waiting for funding period to end (16 seconds)...");
+      await new Promise(resolve => setTimeout(resolve, 16000));
+      
+      logInfo("Funding period ended, completing funding...");
 
       const tx = await program.methods
         .completeFunding()
-        .accounts({ payer: creator } as any)
-        .accounts({ assetPool: poolAccounts.assetPool } as any)
-        .accounts({ seniorPool: poolAccounts.seniorPool } as any)
-        .accounts({ firstLossPool: poolAccounts.firstLossPool } as any)
+        .accounts({
+          payer: creator,
+          assetPool: poolAccounts.assetPool,
+          seniorPool: poolAccounts.seniorPool,
+          firstLossPool: poolAccounts.firstLossPool,
+        })
         .rpc();
 
       logTransaction("Funding completed", tx);
@@ -3447,8 +3465,8 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
       const creator = (provider.wallet as any).publicKey as PublicKey;
       const poolName = "Post Unpause Pool";
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new anchor.BN(now + 60);
-      const fundingEndTime = new anchor.BN(now + 60 + 86400);
+      const fundingStartTime = new anchor.BN(now - 10); // Start 10 seconds ago
+      const fundingEndTime = new anchor.BN(now + 86400); // End in 1 day
 
       const tx = await program.methods
         .createAssetPool(
@@ -3552,8 +3570,8 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
       const creator = (provider.wallet as any).publicKey as PublicKey;
       const poolName = "Concurrent Test Pool";
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new anchor.BN(now + 60);
-      const fundingEndTime = new anchor.BN(now + 60 + 86400);
+      const fundingStartTime = new anchor.BN(now - 10); // Start 10 seconds ago
+      const fundingEndTime = new anchor.BN(now + 86400); // End in 1 day
 
       const tx = await program.methods
         .createAssetPool(
