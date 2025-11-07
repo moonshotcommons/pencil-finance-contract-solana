@@ -371,7 +371,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
             operationAdmin: env.operationAdmin.publicKey,
             systemConfig: systemConfigPda,
             assetWhitelist: assetWhitelistPda,
-          })
+          } as any)
           .signers([env.operationAdmin])
           .rpc();
         logTransaction("Whitelist initialized by adding USDT", tx);
@@ -394,7 +394,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
           operationAdmin: env.operationAdmin.publicKey,
           systemConfig: systemConfigPda,
           assetWhitelist: assetWhitelistPda,
-        })
+        } as any)
         .signers([env.operationAdmin])
         .rpc();
 
@@ -422,7 +422,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
           operationAdmin: env.operationAdmin.publicKey,
           systemConfig: systemConfigPda,
           assetWhitelist: assetWhitelistPda,
-        })
+        } as any)
         .signers([env.operationAdmin])
         .rpc();
 
@@ -1290,7 +1290,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
           treasuryAta: treasuryTokenAccount,
           assetMint: env.usdtMint,
           treasury: env.treasury.publicKey,
-        })
+        } as any)
         .signers([env.seniorInvestor1])
         .rpc();
 
@@ -1375,7 +1375,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
           treasuryAta: treasuryTokenAccount,
           assetMint: env.usdtMint,
           treasury: env.treasury.publicKey,
-        })
+        } as any)
         .signers([env.juniorInvestor1])
         .rpc();
 
@@ -1438,7 +1438,7 @@ describe("Pencil Solana - Main Flow Integration Tests", () => {
           assetPool: poolAccounts.assetPool,
           seniorPool: poolAccounts.seniorPool,
           firstLossPool: poolAccounts.firstLossPool,
-        })
+        } as any)
         .rpc();
 
       logTransaction("Funding completed", tx);
