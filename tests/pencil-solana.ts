@@ -331,23 +331,24 @@ describe("pencil-solana", () => {
       );
 
       const assetPoolVault = anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: assetPoolPda,
       });
 
       const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
       const treasuryAta = anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: systemConfig.treasury,
       });
 
       const tx = await program.methods
         .initializeRelatedAccounts()
         .accounts({
+          systemConfig: systemConfigPda,
           assetPool: assetPoolPda,
-          assetMint: assetAddress.publicKey,
+          assetMint: assetAddress,
           treasury: systemConfig.treasury,
-        })
+        } as any)
         .rpc();
 
       console.log("✅ Related accounts initialized:", tx);
@@ -367,7 +368,7 @@ describe("pencil-solana", () => {
       // Verify Funding account was created and initialized
       const funding = await program.account.funding.fetch(fundingPda);
       assert.equal(funding.assetPool.toString(), assetPoolPda.toString());
-      assert.equal(funding.assetAddress.toString(), assetAddress.publicKey.toString());
+      assert.equal(funding.assetAddress.toString(), assetAddress.toString());
       assert.equal(funding.seniorTotal.toNumber(), 0);
       assert.equal(funding.juniorTotal.toNumber(), 0);
 
@@ -429,7 +430,7 @@ describe("pencil-solana", () => {
           fundingEndTime
         )
         .accounts({
-          assetAddress: assetAddress.publicKey,
+          assetAddress: assetAddress,
         })
         .rpc();
 
@@ -472,23 +473,24 @@ describe("pencil-solana", () => {
       );
 
       failedPoolVault = anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: failedPoolPda,
       });
 
       const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
       const treasuryAta = anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: systemConfig.treasury,
       });
 
       await program.methods
         .initializeRelatedAccounts()
         .accounts({
+          systemConfig: systemConfigPda,
           assetPool: failedPoolPda,
-          assetMint: assetAddress.publicKey,
+          assetMint: assetAddress,
           treasury: systemConfig.treasury,
-        })
+        } as any)
         .rpc();
 
       console.log("✅ Failed pool initialized");
@@ -504,7 +506,7 @@ describe("pencil-solana", () => {
 
       // Create token account for senior investor
       const seniorTokenAccount = await anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: seniorInvestor.publicKey,
       });
 
@@ -529,7 +531,7 @@ describe("pencil-solana", () => {
       );
 
       const seniorTokenAccount = await anchor.utils.token.associatedAddress({
-        mint: assetAddress.publicKey,
+        mint: assetAddress,
         owner: seniorInvestor.publicKey,
       });
 
@@ -542,7 +544,7 @@ describe("pencil-solana", () => {
             subscription: seniorSubscriptionPda,
             poolVault: failedPoolVault,
             userTokenAccount: seniorTokenAccount,
-            assetMint: assetAddress.publicKey,
+            assetMint: assetAddress,
           } as any)
           .signers([seniorInvestor])
           .rpc();
@@ -566,7 +568,7 @@ describe("pencil-solana", () => {
             authority: payer.publicKey,
             assetPool: failedPoolPda,
             poolVault: failedPoolVault,
-            assetMint: assetAddress.publicKey,
+            assetMint: assetAddress,
           } as any)
           .rpc();
 
@@ -612,20 +614,20 @@ describe("pencil-solana", () => {
 
         // Get user's asset token account
         const userAssetAccount = anchor.utils.token.associatedAddress({
-          mint: assetAddress.publicKey,
+          mint: assetAddress,
           owner: payer.publicKey,
         });
 
         // Get asset pool vault
         const assetPoolVault = anchor.utils.token.associatedAddress({
-          mint: assetAddress.publicKey,
+          mint: assetAddress,
           owner: assetPoolPda,
         });
 
         // Get treasury ATA
         const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
         const treasuryAta = anchor.utils.token.associatedAddress({
-          mint: assetAddress.publicKey,
+          mint: assetAddress,
           owner: systemConfig.treasury,
         });
 
@@ -644,7 +646,7 @@ describe("pencil-solana", () => {
             userAssetAccount: userAssetAccount,
             assetPoolVault: assetPoolVault,
             treasuryAta: treasuryAta,
-            assetMint: assetAddress.publicKey,
+            assetMint: assetAddress,
           } as any)
           .rpc();
 
@@ -957,7 +959,7 @@ describe("pencil-solana", () => {
               fundingEndTime
             )
             .accounts({
-              assetAddress: assetAddress.publicKey,
+              assetAddress: assetAddress,
             })
             .rpc();
 
