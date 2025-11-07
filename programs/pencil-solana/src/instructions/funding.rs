@@ -301,10 +301,14 @@ pub fn complete_funding(ctx: Context<CompleteFunding>) -> Result<()> {
     let first_loss_pool = &mut ctx.accounts.first_loss_pool;
     first_loss_pool.total_deposits = asset_pool.junior_amount;
 
+    // 更新 asset_pool.total_amount 为实际募资金额
+    asset_pool.total_amount = total;
+
     // 更新资产池状态
     asset_pool.status = asset_pool_status::FUNDED;
 
     msg!("Funding completed - ready for token distribution");
+    msg!("Total amount: {}", total);
     msg!("Senior amount: {}", asset_pool.senior_amount);
     msg!("Junior amount: {}", asset_pool.junior_amount);
     msg!("Junior ratio: {}%", junior_ratio / 100);
@@ -784,7 +788,11 @@ pub struct WithdrawSeniorSubscription<'info> {
     )]
     pub system_config: Account<'info, crate::state::SystemConfig>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        bump
+    )]
     pub asset_pool: Account<'info, AssetPool>,
 
     #[account(
@@ -824,7 +832,10 @@ pub struct WithdrawSeniorSubscription<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, amount: u64) -> Result<()> {
+pub fn withdraw_senior_subscription(
+    ctx: Context<WithdrawSeniorSubscription>,
+    amount: u64,
+) -> Result<()> {
     require!(amount > 0, PencilError::InvalidSubscriptionAmount);
     require!(
         amount <= ctx.accounts.subscription.amount,
@@ -856,14 +867,30 @@ pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, am
         .ok_or(PencilError::ArithmeticOverflow)?;
 
     // 更新订阅金额
-    ctx.accounts.subscription.amount = ctx.accounts.subscription.amount
+    ctx.accounts.subscription.amount = ctx
+        .accounts
+        .subscription
+        .amount
         .checked_sub(amount)
         .ok_or(PencilError::ArithmeticOverflow)?;
 
     // 更新资产池 Senior 金额
-    ctx.accounts.asset_pool.senior_amount = ctx.accounts.asset_pool.senior_amount
+    ctx.accounts.asset_pool.senior_amount = ctx
+        .accounts
+        .asset_pool
+        .senior_amount
         .checked_sub(amount)
         .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 构造 asset_pool 的 PDA 签名
+    let asset_pool = &ctx.accounts.asset_pool;
+    let asset_pool_seeds = &[
+        seeds::ASSET_POOL,
+        asset_pool.creator.as_ref(),
+        asset_pool.name.as_bytes(),
+        &[ctx.bumps.asset_pool],
+    ];
+    let asset_pool_signer = &[&asset_pool_seeds[..]];
 
     // 转账手续费到金库
     if fee > 0 {
@@ -873,7 +900,7 @@ pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, am
             authority: ctx.accounts.asset_pool.to_account_info(),
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, asset_pool_signer);
         token::transfer(cpi_ctx, fee)?;
     }
 
@@ -885,11 +912,15 @@ pub fn withdraw_senior_subscription(ctx: Context<WithdrawSeniorSubscription>, am
             authority: ctx.accounts.asset_pool.to_account_info(),
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, asset_pool_signer);
         token::transfer(cpi_ctx, actual_amount)?;
     }
 
-    msg!("Senior subscription withdrawn: {} tokens, fee: {}", amount, fee);
+    msg!(
+        "Senior subscription withdrawn: {} tokens, fee: {}",
+        amount,
+        fee
+    );
 
     Ok(())
 }
@@ -907,7 +938,11 @@ pub struct WithdrawJuniorSubscription<'info> {
     )]
     pub system_config: Account<'info, crate::state::SystemConfig>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        bump
+    )]
     pub asset_pool: Account<'info, AssetPool>,
 
     #[account(
@@ -947,7 +982,10 @@ pub struct WithdrawJuniorSubscription<'info> {
     pub token_program: Program<'info, Token>,
 }
 
-pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, amount: u64) -> Result<()> {
+pub fn withdraw_junior_subscription(
+    ctx: Context<WithdrawJuniorSubscription>,
+    amount: u64,
+) -> Result<()> {
     require!(amount > 0, PencilError::InvalidSubscriptionAmount);
     require!(
         amount <= ctx.accounts.subscription.amount,
@@ -979,14 +1017,30 @@ pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, am
         .ok_or(PencilError::ArithmeticOverflow)?;
 
     // 更新订阅金额
-    ctx.accounts.subscription.amount = ctx.accounts.subscription.amount
+    ctx.accounts.subscription.amount = ctx
+        .accounts
+        .subscription
+        .amount
         .checked_sub(amount)
         .ok_or(PencilError::ArithmeticOverflow)?;
 
     // 更新资产池 Junior 金额
-    ctx.accounts.asset_pool.junior_amount = ctx.accounts.asset_pool.junior_amount
+    ctx.accounts.asset_pool.junior_amount = ctx
+        .accounts
+        .asset_pool
+        .junior_amount
         .checked_sub(amount)
         .ok_or(PencilError::ArithmeticOverflow)?;
+
+    // 构造 asset_pool 的 PDA 签名
+    let asset_pool = &ctx.accounts.asset_pool;
+    let asset_pool_seeds = &[
+        seeds::ASSET_POOL,
+        asset_pool.creator.as_ref(),
+        asset_pool.name.as_bytes(),
+        &[ctx.bumps.asset_pool],
+    ];
+    let asset_pool_signer = &[&asset_pool_seeds[..]];
 
     // 转账手续费到金库
     if fee > 0 {
@@ -996,7 +1050,7 @@ pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, am
             authority: ctx.accounts.asset_pool.to_account_info(),
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, asset_pool_signer);
         token::transfer(cpi_ctx, fee)?;
     }
 
@@ -1008,11 +1062,15 @@ pub fn withdraw_junior_subscription(ctx: Context<WithdrawJuniorSubscription>, am
             authority: ctx.accounts.asset_pool.to_account_info(),
         };
         let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, asset_pool_signer);
         token::transfer(cpi_ctx, actual_amount)?;
     }
 
-    msg!("Junior subscription withdrawn: {} tokens, fee: {}", amount, fee);
+    msg!(
+        "Junior subscription withdrawn: {} tokens, fee: {}",
+        amount,
+        fee
+    );
 
     Ok(())
 }

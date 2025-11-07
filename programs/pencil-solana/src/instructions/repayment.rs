@@ -279,6 +279,12 @@ pub fn repay(ctx: Context<Repay>, amount: u64, period: u64) -> Result<()> {
         asset_pool.status = asset_pool_status::REPAYING;
     }
 
+    // 检查是否是最后一期还款，如果是则将状态设置为 COMPLETED
+    if period == asset_pool.repayment_count {
+        asset_pool.status = asset_pool_status::COMPLETED;
+        msg!("All repayments completed. Pool status set to COMPLETED.");
+    }
+
     // 10. 发出 RepaymentDistributed 事件
     emit!(crate::RepaymentDistributed {
         asset_pool: asset_pool.key(),
@@ -303,6 +309,7 @@ pub fn repay(ctx: Context<Repay>, amount: u64, period: u64) -> Result<()> {
 }
 
 /// 计算当前应还期数
+/// repayment_period: 还款周期（秒数）
 fn calculate_current_period(funding_end_time: i64, repayment_period: u64) -> Result<u64> {
     let clock = Clock::get()?;
     let current_time = clock.unix_timestamp;
@@ -317,13 +324,16 @@ fn calculate_current_period(funding_end_time: i64, repayment_period: u64) -> Res
         .checked_sub(funding_end_time)
         .ok_or(PencilError::ArithmeticOverflow)?;
 
-    // 转换为天数
-    let elapsed_days = (elapsed_seconds / 86400) as u64;
+    // 计算当前期数（直接用秒数计算，支持任意时间单位）
+    let count = if repayment_period > 0 {
+        (elapsed_seconds as u64) / repayment_period
+    } else {
+        0
+    };
 
-    // 计算当前期数（向上取整）
-    let period = (elapsed_days / repayment_period)
-        .checked_add(1)
-        .ok_or(PencilError::ArithmeticOverflow)?;
+    // 与EVM一致：如果还没到第一个还款期，也允许还第一期
+    // return count > 0 ? count : 1
+    let period = if count > 0 { count } else { 1 };
 
     Ok(period)
 }
@@ -655,25 +665,44 @@ pub fn withdraw_principal(ctx: Context<WithdrawPrincipal>, nft_id: u64) -> Resul
     // 3. 验证用户未提取过本金
     // (已在 constraint 中验证)
 
-    // 4. 从 JuniorNFTMetadata 读取本金金额
-    let principal_amount = nft_metadata.principal;
-    require!(
-        principal_amount > 0,
-        PencilError::InvalidPrincipalCalculation
-    );
+    // 4. 从 JuniorNFTMetadata 读取用户份额
+    let user_shares = nft_metadata.principal;
+    require!(user_shares > 0, PencilError::InvalidPrincipalCalculation);
 
-    // 验证 FirstLossPool 有足够余额
-    let first_loss_available = first_loss_pool
+    // 5. 计算按比例分配的金额（首损机制）
+    // 按照EVM逻辑：assetAmount = vaultBalance * userShares / totalRemainingShares
+
+    // 获取vault当前余额
+    let vault_balance = ctx.accounts.asset_pool_vault.amount;
+
+    // 计算剩余未提取的总份额
+    let total_remaining_shares = first_loss_pool
         .total_deposits
         .checked_sub(first_loss_pool.repaid_amount)
         .ok_or(PencilError::ArithmeticOverflow)?;
 
     require!(
-        first_loss_available >= principal_amount,
-        PencilError::InsufficientPoolFunds
+        total_remaining_shares > 0,
+        PencilError::InvalidPrincipalCalculation
     );
 
-    // 5. 从 FirstLossPool 转账本金至用户 ATA
+    // 按比例计算用户应得金额
+    // actual_amount = vault_balance * user_shares / total_remaining_shares
+    let actual_amount = (vault_balance as u128)
+        .checked_mul(user_shares as u128)
+        .ok_or(PencilError::ArithmeticOverflow)?
+        .checked_div(total_remaining_shares as u128)
+        .ok_or(PencilError::ArithmeticOverflow)? as u64;
+
+    msg!(
+        "Junior本金提取计算 - Vault余额: {}, 用户份额: {}, 剩余总份额: {}, 实际金额: {}",
+        vault_balance,
+        user_shares,
+        total_remaining_shares,
+        actual_amount
+    );
+
+    // 6. 从 FirstLossPool 转账按比例计算的金额至用户 ATA
     // 准备 PDA 签名种子
     let asset_pool_bump = ctx.bumps.asset_pool;
     let asset_pool_creator = asset_pool.creator;
@@ -694,31 +723,33 @@ pub fn withdraw_principal(ctx: Context<WithdrawPrincipal>, nft_id: u64) -> Resul
     let transfer_cpi_program = ctx.accounts.token_program.to_account_info();
     let transfer_cpi_ctx =
         CpiContext::new_with_signer(transfer_cpi_program, transfer_cpi_accounts, signer_seeds);
-    token::transfer(transfer_cpi_ctx, principal_amount)?;
+    token::transfer(transfer_cpi_ctx, actual_amount)?;
 
-    // 更新 FirstLossPool 已使用金额
+    // 更新 FirstLossPool repaid_amount（记录已处理的份额）
+    // 注意：这里记录的是用户份额，不是实际转账金额（按比例分配机制）
     first_loss_pool.repaid_amount = first_loss_pool
         .repaid_amount
-        .checked_add(principal_amount)
+        .checked_add(user_shares)
         .ok_or(PencilError::ArithmeticOverflow)?;
 
-    // 6. 标记 JuniorNFTMetadata.principal_withdrawn = true
+    // 7. 标记 JuniorNFTMetadata.principal_withdrawn = true
     nft_metadata.principal_withdrawn = true;
 
-    // 7. 发出 PrincipalWithdrawn 事件
+    // 8. 发出 PrincipalWithdrawn 事件
     emit!(crate::PrincipalWithdrawn {
         asset_pool: asset_pool.key(),
         user: ctx.accounts.user.key(),
         nft_id,
-        amount: principal_amount,
+        amount: actual_amount,
         timestamp: clock.unix_timestamp,
     });
 
     msg!(
-        "Junior 本金提取完成 - NFT ID: {}, 用户: {}, 金额: {}",
+        "Junior 本金提取完成 - NFT ID: {}, 用户: {}, 份额: {}, 实际金额: {}",
         nft_id,
         ctx.accounts.user.key(),
-        principal_amount
+        user_shares,
+        actual_amount
     );
 
     Ok(())
@@ -806,10 +837,12 @@ pub fn early_exit_senior(ctx: Context<EarlyExitSenior>, amount: u64) -> Result<(
     let asset_pool = &ctx.accounts.asset_pool;
     let clock = Clock::get()?;
 
-    // 1. 验证募资已完成（AssetPool 状态为 FUNDED 或 REPAYING）
+    // 1. 验证募资已完成（AssetPool 状态为 FUNDED, REPAYING 或 COMPLETED）
+    // COMPLETED状态允许Senior按比例提取剩余资金（类似EVM的withdraw方法）
     require!(
         asset_pool.status == asset_pool_status::FUNDED
-            || asset_pool.status == asset_pool_status::REPAYING,
+            || asset_pool.status == asset_pool_status::REPAYING
+            || asset_pool.status == asset_pool_status::COMPLETED,
         PencilError::InvalidAssetPoolStatus
     );
 
@@ -825,6 +858,12 @@ pub fn early_exit_senior(ctx: Context<EarlyExitSenior>, amount: u64) -> Result<(
         PencilError::InsufficientBalance
     );
 
+    // 如果池已完成（COMPLETED状态），使用按比例分配的逻辑（类似EVM的withdraw方法）
+    if asset_pool.status == asset_pool_status::COMPLETED {
+        return handle_senior_withdraw_after_completion(ctx, amount);
+    }
+
+    // 以下是early exit逻辑（FUNDED和REPAYING状态）
     // 2. 根据时间计算早退费率（募资结束前/后使用不同费率）
     let early_exit_fee_rate = if clock.unix_timestamp < asset_pool.funding_end_time {
         asset_pool.senior_early_before_exit_fee
@@ -975,6 +1014,85 @@ pub fn early_exit_senior(ctx: Context<EarlyExitSenior>, amount: u64) -> Result<(
         amount,
         exit_fee,
         actual_refund
+    );
+
+    Ok(())
+}
+
+/// 处理池完成后的Senior按比例提取（类似EVM的withdraw方法）
+fn handle_senior_withdraw_after_completion(
+    ctx: Context<EarlyExitSenior>,
+    amount: u64,
+) -> Result<()> {
+    // 1. 获取GROW token总供应量
+    let grow_total_supply = ctx.accounts.grow_token_mint.supply;
+    require!(
+        grow_total_supply > 0,
+        PencilError::InvalidPrincipalCalculation
+    );
+
+    // 2. 获取vault当前余额
+    let vault_balance = ctx.accounts.asset_pool_vault.amount;
+
+    // 3. 按比例计算用户应得金额（类似Junior的按比例分配）
+    // actual_amount = vault_balance * user_grow_tokens / total_grow_supply
+    let actual_amount = (vault_balance as u128)
+        .checked_mul(amount as u128)
+        .ok_or(PencilError::ArithmeticOverflow)?
+        .checked_div(grow_total_supply as u128)
+        .ok_or(PencilError::ArithmeticOverflow)? as u64;
+
+    msg!(
+        "Senior正常提取计算 - Vault余额: {}, GROW销毁: {}, GROW总量: {}, 实际金额: {}",
+        vault_balance,
+        amount,
+        grow_total_supply,
+        actual_amount
+    );
+
+    // 4. 销毁用户的 GROW Token
+    let burn_cpi_accounts = Burn {
+        mint: ctx.accounts.grow_token_mint.to_account_info(),
+        from: ctx.accounts.user_grow_token_account.to_account_info(),
+        authority: ctx.accounts.user.to_account_info(),
+    };
+    let burn_cpi_program = ctx.accounts.token_program.to_account_info();
+    let burn_cpi_ctx = CpiContext::new(burn_cpi_program, burn_cpi_accounts);
+    token::burn(burn_cpi_ctx, amount)?;
+
+    // 5. 准备 PDA 签名种子
+    let asset_pool = &ctx.accounts.asset_pool;
+    let asset_pool_seeds = &[
+        seeds::ASSET_POOL,
+        asset_pool.creator.as_ref(),
+        asset_pool.name.as_bytes(),
+        &[ctx.bumps.asset_pool],
+    ];
+    let signer_seeds = &[&asset_pool_seeds[..]];
+
+    // 6. 转账按比例计算的金额给用户
+    let transfer_cpi_accounts = Transfer {
+        from: ctx.accounts.asset_pool_vault.to_account_info(),
+        to: ctx.accounts.user_asset_account.to_account_info(),
+        authority: ctx.accounts.asset_pool.to_account_info(),
+    };
+    let transfer_cpi_program = ctx.accounts.token_program.to_account_info();
+    let transfer_cpi_ctx =
+        CpiContext::new_with_signer(transfer_cpi_program, transfer_cpi_accounts, signer_seeds);
+    token::transfer(transfer_cpi_ctx, actual_amount)?;
+
+    // 7. 更新SeniorPool的total_deposits
+    let senior_pool = &mut ctx.accounts.senior_pool;
+    senior_pool.total_deposits = senior_pool
+        .total_deposits
+        .checked_sub(actual_amount)
+        .ok_or(PencilError::ArithmeticOverflow)?;
+
+    msg!(
+        "Senior 正常提取完成 - 用户: {}, GROW销毁: {}, 实际金额: {}",
+        ctx.accounts.user.key(),
+        amount,
+        actual_amount
     );
 
     Ok(())

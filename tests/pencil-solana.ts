@@ -2,6 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import { Program, BN } from "@coral-xyz/anchor";
 import { PencilSolana } from "../target/types/pencil_solana";
 import { PublicKey, Keypair } from "@solana/web3.js";
+import { createMint, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { assert } from "chai";
 
 describe("pencil-solana", () => {
@@ -12,7 +13,8 @@ describe("pencil-solana", () => {
   const payer = provider.wallet;
   const treasury = Keypair.generate();
   const operationAdmin = Keypair.generate();
-  const assetAddress = Keypair.generate();
+  let assetAddress: PublicKey; // Will be initialized as a real SPL Token Mint
+  let systemAdmin: Keypair; // Will be set in "Updates admin role" test
 
   let systemConfigPda: PublicKey;
   let assetWhitelistPda: PublicKey;
@@ -30,6 +32,20 @@ describe("pencil-solana", () => {
         [Buffer.from("system_config")],
         program.programId
       );
+
+      // Check if system config is already initialized (by main-flow.test.ts)
+      try {
+        const existingConfig = await program.account.systemConfig.fetch(systemConfigPda);
+        console.log("✅ System config already initialized, skipping initialization");
+
+        // Verify it exists and has basic properties
+        assert.isNotNull(existingConfig);
+        assert.isNotNull(existingConfig.superAdmin);
+        console.log("✅ System config verified:", existingConfig.superAdmin.toString());
+        return;
+      } catch (e) {
+        // Not initialized yet, proceed with initialization
+      }
 
       const tx = await program.methods
         .initializeSystemConfig(
@@ -55,16 +71,23 @@ describe("pencil-solana", () => {
     });
 
     it("Updates admin role", async () => {
-      const newAdmin = Keypair.generate();
+      systemAdmin = Keypair.generate();
+
+      // Airdrop SOL to systemAdmin
+      const airdropSig = await provider.connection.requestAirdrop(
+        systemAdmin.publicKey,
+        2 * anchor.web3.LAMPORTS_PER_SOL
+      );
+      await provider.connection.confirmTransaction(airdropSig);
 
       const tx = await program.methods
-        .updateAdmin({ systemAdmin: {} }, newAdmin.publicKey)
+        .updateAdmin({ systemAdmin: {} }, systemAdmin.publicKey)
         .rpc();
 
       console.log("✅ Admin updated:", tx);
 
       const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
-      assert.equal(systemConfig.systemAdmin.toString(), newAdmin.publicKey.toString());
+      assert.equal(systemConfig.systemAdmin.toString(), systemAdmin.publicKey.toString());
     });
 
     it("Sets operation admin role", async () => {
@@ -112,12 +135,17 @@ describe("pencil-solana", () => {
 
       const tx = await program.methods
         .updateFeeRate({ platformFee: {} }, newFeeRate)
+        .accounts({
+          systemAdmin: systemAdmin.publicKey,
+          systemConfig: systemConfigPda,
+        })
+        .signers([systemAdmin])
         .rpc();
 
       console.log("✅ Fee rate updated:", tx);
 
-      const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
-      assert.equal(systemConfig.platformFeeRate, newFeeRate);
+      const updatedConfig = await program.account.systemConfig.fetch(systemConfigPda);
+      assert.equal(updatedConfig.platformFeeRate, newFeeRate);
     });
 
     it("Sets treasury address", async () => {
@@ -125,24 +153,43 @@ describe("pencil-solana", () => {
 
       const tx = await program.methods
         .setTreasury(newTreasury.publicKey)
+        .accounts({
+          systemAdmin: systemAdmin.publicKey,
+          systemConfig: systemConfigPda,
+        })
+        .signers([systemAdmin])
         .rpc();
 
       console.log("✅ Treasury updated:", tx);
 
-      const systemConfig = await program.account.systemConfig.fetch(systemConfigPda);
-      assert.equal(systemConfig.treasury.toString(), newTreasury.publicKey.toString());
+      const updatedConfig = await program.account.systemConfig.fetch(systemConfigPda);
+      assert.equal(updatedConfig.treasury.toString(), newTreasury.publicKey.toString());
     });
   });
 
   describe("Asset Whitelist", () => {
     it("Adds asset to whitelist", async () => {
+      // Create a real SPL Token Mint for testing
+      const mintKeypair = Keypair.generate();
+      const decimals = 6;
+
+      // Use @solana/spl-token to create token mint
+      assetAddress = await createMint(
+        provider.connection,
+        (provider.wallet as any).payer,
+        (provider.wallet as any).publicKey,
+        null,
+        decimals,
+        mintKeypair
+      );
+
       [assetWhitelistPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("asset_whitelist")],
         program.programId
       );
 
       const tx = await program.methods
-        .setAssetSupported(assetAddress.publicKey, true)
+        .setAssetSupported(assetAddress, true)
         .accounts({
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
@@ -155,13 +202,13 @@ describe("pencil-solana", () => {
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
       // Check that the asset is in the whitelist (not the total count, as other tests may have added assets)
-      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.toString());
       assert.isTrue(isInWhitelist, "Asset should be in whitelist");
     });
 
     it("Removes asset from whitelist", async () => {
       const tx = await program.methods
-        .setAssetSupported(assetAddress.publicKey, false)
+        .setAssetSupported(assetAddress, false)
         .accounts({
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
@@ -174,13 +221,13 @@ describe("pencil-solana", () => {
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
       // Check that the asset is not in the whitelist
-      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.toString());
       assert.isFalse(isInWhitelist, "Asset should not be in whitelist");
     });
 
     it("Re-adds asset to whitelist for pool creation", async () => {
       const tx = await program.methods
-        .setAssetSupported(assetAddress.publicKey, true)
+        .setAssetSupported(assetAddress, true)
         .accounts({
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
@@ -193,7 +240,7 @@ describe("pencil-solana", () => {
 
       const assetWhitelist = await program.account.assetWhitelist.fetch(assetWhitelistPda);
       // Check that the asset is in the whitelist again
-      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.publicKey.toString());
+      const isInWhitelist = assetWhitelist.assets.some(asset => asset.toString() === assetAddress.toString());
       assert.isTrue(isInWhitelist, "Asset should be in whitelist again");
     });
   });
@@ -208,28 +255,28 @@ describe("pencil-solana", () => {
       );
 
       const now = Math.floor(Date.now() / 1000);
-      const fundingStartTime = new BN(now - 10); // Start 10 seconds ago
-      const fundingEndTime = new BN(now + 86400); // End in 1 day (确保募资期限至少为 86400 秒)
+      const fundingStartTime = new BN(now - 5); // Start 5 seconds ago
+      const fundingEndTime = new BN(now + 15); // End in 15 seconds (short for testing)
 
       const tx = await program.methods
         .createAssetPool(
           assetPoolName,
-          500,
-          100,
-          200,
-          300,
-          1000,
-          10000,
-          800,
-          new BN(30),
-          new BN(12),
+          500, // platform_fee
+          100, // senior_early_before_exit_fee
+          200, // senior_early_after_exit_fee
+          300, // junior_early_before_exit_fee
+          1000, // min_junior_ratio
+          75, // repayment_rate (0.75% per period, matching EVM)
+          35, // senior_fixed_rate (0.35% per period, matching EVM)
+          new BN(5), // repayment_period (5 seconds for testing)
+          new BN(3), // repayment_count (3 periods for testing)
           new BN(1000000 * 1_000_000),
           new BN(100000 * 1_000_000),
           fundingStartTime,
           fundingEndTime
         )
         .accounts({
-          assetAddress: assetAddress.publicKey,
+          assetAddress: assetAddress,
         })
         .rpc();
 

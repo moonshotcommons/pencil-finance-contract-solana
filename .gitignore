@@ -17,4 +17,4 @@ test-ledger
 .yarn
 .history
 deployment-*.json
-docs/
+docs/docs_local/
