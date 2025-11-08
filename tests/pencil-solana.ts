@@ -138,7 +138,7 @@ describe("pencil-solana", () => {
         .accounts({
           systemAdmin: systemAdmin.publicKey,
           systemConfig: systemConfigPda,
-        })
+        } as any)
         .signers([systemAdmin])
         .rpc();
 
@@ -156,7 +156,7 @@ describe("pencil-solana", () => {
         .accounts({
           systemAdmin: systemAdmin.publicKey,
           systemConfig: systemConfigPda,
-        })
+        } as any)
         .signers([systemAdmin])
         .rpc();
 
@@ -194,7 +194,7 @@ describe("pencil-solana", () => {
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
           assetWhitelist: assetWhitelistPda,
-        })
+        } as any)
         .signers([operationAdmin])
         .rpc();
 
@@ -213,7 +213,7 @@ describe("pencil-solana", () => {
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
           assetWhitelist: assetWhitelistPda,
-        })
+        } as any)
         .signers([operationAdmin])
         .rpc();
 
@@ -232,7 +232,7 @@ describe("pencil-solana", () => {
           operationAdmin: operationAdmin.publicKey,
           systemConfig: systemConfigPda,
           assetWhitelist: assetWhitelistPda,
-        })
+        } as any)
         .signers([operationAdmin])
         .rpc();
 
@@ -887,7 +887,7 @@ describe("pencil-solana", () => {
         });
 
         const userAssetAccount = anchor.utils.token.associatedAddress({
-          mint: assetAddress.publicKey,
+          mint: assetAddress,
           owner: payer.publicKey,
         });
 
