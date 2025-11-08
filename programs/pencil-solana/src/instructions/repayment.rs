@@ -30,7 +30,7 @@ pub struct Repay<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Box<Account<'info, AssetPool>>,
@@ -164,7 +164,7 @@ pub fn repay(ctx: Context<Repay>, amount: u64, period: u64) -> Result<()> {
         let asset_pool_seeds = &[
             seeds::ASSET_POOL,
             asset_pool_creator.as_ref(),
-            asset_pool_name.as_bytes(),
+            &asset_pool_name,
             &[asset_pool_bump],
         ];
         let signer_seeds = &[&asset_pool_seeds[..]];
@@ -422,7 +422,7 @@ pub struct ClaimJuniorInterest<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Box<Account<'info, AssetPool>>,
@@ -532,7 +532,7 @@ pub fn claim_junior_interest(ctx: Context<ClaimJuniorInterest>, nft_id: u64) -> 
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool_creator.as_ref(),
-        asset_pool_name.as_bytes(),
+        &asset_pool_name,
         &[asset_pool_bump],
     ];
     let signer_seeds = &[&asset_pool_seeds[..]];
@@ -595,7 +595,7 @@ pub struct WithdrawPrincipal<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.status == asset_pool_status::COMPLETED @ PencilError::InvalidAssetPoolStatus
     )]
@@ -710,7 +710,7 @@ pub fn withdraw_principal(ctx: Context<WithdrawPrincipal>, nft_id: u64) -> Resul
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool_creator.as_ref(),
-        asset_pool_name.as_bytes(),
+        &asset_pool_name,
         &[asset_pool_bump],
     ];
     let signer_seeds = &[&asset_pool_seeds[..]];
@@ -772,7 +772,7 @@ pub struct EarlyExitSenior<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Box<Account<'info, AssetPool>>,
@@ -901,7 +901,7 @@ pub fn early_exit_senior(ctx: Context<EarlyExitSenior>, amount: u64) -> Result<(
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool_creator.as_ref(),
-        asset_pool_name.as_bytes(),
+        &asset_pool_name,
         &[asset_pool_bump],
     ];
     let signer_seeds = &[&asset_pool_seeds[..]];
@@ -1065,7 +1065,7 @@ fn handle_senior_withdraw_after_completion(
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let signer_seeds = &[&asset_pool_seeds[..]];

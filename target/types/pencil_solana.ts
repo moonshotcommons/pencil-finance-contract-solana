@@ -274,36 +274,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "poolVault",
@@ -360,36 +331,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "firstLossPool",
@@ -837,36 +779,7 @@ export type PencilSolana = {
           "signer": true
         },
         {
-          "name": "assetPool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "name": "assetPool"
         },
         {
           "name": "subscription",
@@ -1088,36 +1001,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -1308,36 +1192,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "seniorPool",
@@ -2064,36 +1919,7 @@ export type PencilSolana = {
           "signer": true
         },
         {
-          "name": "assetPool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "name": "assetPool"
         },
         {
           "name": "growTokenMint",
@@ -2259,36 +2085,7 @@ export type PencilSolana = {
           "signer": true
         },
         {
-          "name": "assetPool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "name": "assetPool"
         },
         {
           "name": "juniorNftMint",
@@ -2553,36 +2350,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -2712,36 +2480,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "seniorPool",
@@ -3556,36 +3295,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -3666,36 +3376,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "firstLossPool",
@@ -3876,36 +3557,7 @@ export type PencilSolana = {
         },
         {
           "name": "assetPool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "assetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "assetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -4630,9 +4282,9 @@ export type PencilSolana = {
           {
             "name": "name",
             "docs": [
-              "资产池名称"
+              "资产池名称 (最多 64 字节)"
             ],
-            "type": "string"
+            "type": "bytes"
           },
           {
             "name": "status",

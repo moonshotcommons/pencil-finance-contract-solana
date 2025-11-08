@@ -34,8 +34,8 @@ pub struct SystemConfig {
 /// 资产池账户
 #[account]
 pub struct AssetPool {
-    /// 资产池名称
-    pub name: String,
+    /// 资产池名称 (最多 64 字节)
+    pub name: Vec<u8>,
     /// 资产池状态
     pub status: u8,
     /// 资产代币地址

@@ -324,7 +324,7 @@ pub struct DistributeSeniorToken<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.status == asset_pool_status::FUNDED @ PencilError::InvalidAssetPoolStatus
     )]
@@ -369,7 +369,7 @@ pub fn distribute_senior_token(ctx: Context<DistributeSeniorToken>) -> Result<()
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];
@@ -406,7 +406,7 @@ pub struct DistributeJuniorNFT<'info> {
     pub payer: Signer<'info>,
 
     #[account(
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.status == asset_pool_status::FUNDED @ PencilError::InvalidAssetPoolStatus
     )]
@@ -466,7 +466,7 @@ pub fn distribute_junior_nft(ctx: Context<DistributeJuniorNFT>, nft_id: u64) -> 
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];
@@ -574,7 +574,7 @@ pub struct ProcessRefund<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Account<'info, AssetPool>,
@@ -652,7 +652,7 @@ pub fn process_refund(ctx: Context<ProcessRefund>) -> Result<()> {
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         ctx.accounts.asset_pool.creator.as_ref(),
-        ctx.accounts.asset_pool.name.as_bytes(),
+        &ctx.accounts.asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];
@@ -715,7 +715,7 @@ pub struct CancelAssetPool<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.creator == authority.key() ||
                      asset_pool.system_config == authority.key() @ PencilError::Unauthorized
@@ -769,7 +769,8 @@ pub fn cancel_asset_pool(ctx: Context<CancelAssetPool>) -> Result<()> {
     // 更新资产池状态为 CANCELLED
     asset_pool.status = asset_pool_status::CANCELLED;
 
-    msg!("Asset pool cancelled: {}", asset_pool.name);
+    let name_str = String::from_utf8_lossy(&asset_pool.name);
+    msg!("Asset pool cancelled: {}", name_str);
     msg!("All refunds have been processed");
 
     Ok(())
@@ -790,7 +791,7 @@ pub struct WithdrawSeniorSubscription<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Account<'info, AssetPool>,
@@ -887,7 +888,7 @@ pub fn withdraw_senior_subscription(
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];
@@ -940,7 +941,7 @@ pub struct WithdrawJuniorSubscription<'info> {
 
     #[account(
         mut,
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump
     )]
     pub asset_pool: Account<'info, AssetPool>,
@@ -1037,7 +1038,7 @@ pub fn withdraw_junior_subscription(
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];

@@ -21,7 +21,7 @@ pub struct MintGrowToken<'info> {
     pub payer: Signer<'info>,
 
     #[account(
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.status == asset_pool_status::FUNDED @ PencilError::InvalidAssetPoolStatus
     )]
@@ -60,7 +60,7 @@ pub fn mint_grow_token(ctx: Context<MintGrowToken>, amount: u64) -> Result<()> {
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];
@@ -159,7 +159,7 @@ pub struct MintJuniorNFT<'info> {
     pub payer: Signer<'info>,
 
     #[account(
-        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), asset_pool.name.as_bytes()],
+        seeds = [seeds::ASSET_POOL, asset_pool.creator.as_ref(), &asset_pool.name],
         bump,
         constraint = asset_pool.status == asset_pool_status::FUNDED @ PencilError::InvalidAssetPoolStatus
     )]
@@ -211,7 +211,7 @@ pub fn mint_junior_nft(ctx: Context<MintJuniorNFT>, nft_id: u64, principal: u64)
     let asset_pool_seeds = &[
         seeds::ASSET_POOL,
         asset_pool.creator.as_ref(),
-        asset_pool.name.as_bytes(),
+        &asset_pool.name,
         &[ctx.bumps.asset_pool],
     ];
     let asset_pool_signer = &[&asset_pool_seeds[..]];

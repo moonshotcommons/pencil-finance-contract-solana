@@ -127,7 +127,7 @@ pub fn create_asset_pool(
     );
 
     let asset_pool = &mut ctx.accounts.asset_pool;
-    asset_pool.name = name;
+    asset_pool.name = name.as_bytes().to_vec();
     asset_pool.status = asset_pool_status::CREATED;
     asset_pool.asset_address = ctx.accounts.asset_address.key();
     asset_pool.system_config = ctx.accounts.system_config.key();
@@ -147,7 +147,8 @@ pub fn create_asset_pool(
     asset_pool.creator = ctx.accounts.payer.key();
     asset_pool.created_at = Clock::get()?.unix_timestamp;
 
-    msg!("Asset pool created: {}", asset_pool.name);
+    let name_str = String::from_utf8_lossy(&asset_pool.name);
+    msg!("Asset pool created: {}", name_str);
     msg!("Total amount: {}", total_amount);
     msg!("Min amount: {}", min_amount);
 
@@ -189,7 +190,8 @@ pub fn approve_asset_pool(
 
     asset_pool.status = asset_pool_status::APPROVED;
 
-    msg!("Asset pool approved: {}", asset_pool.name);
+    let name_str = String::from_utf8_lossy(&asset_pool.name);
+    msg!("Asset pool approved: {}", name_str);
 
     Ok(())
 }
@@ -367,9 +369,10 @@ pub fn initialize_related_accounts(ctx: Context<InitializeRelatedAccounts>) -> R
         timestamp: clock.unix_timestamp,
     });
 
+    let name_str = String::from_utf8_lossy(&asset_pool.name);
     msg!(
         "Related accounts initialized for asset pool: {}",
-        asset_pool.name
+        name_str
     );
     msg!("Funding: {}", ctx.accounts.funding.key());
     msg!("Senior Pool: {}", ctx.accounts.senior_pool.key());

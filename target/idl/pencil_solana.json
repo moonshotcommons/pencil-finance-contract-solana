@@ -268,36 +268,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "pool_vault",
@@ -354,36 +325,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "first_loss_pool",
@@ -831,36 +773,7 @@
           "signer": true
         },
         {
-          "name": "asset_pool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "name": "asset_pool"
         },
         {
           "name": "subscription",
@@ -1082,36 +995,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -1302,36 +1186,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "senior_pool",
@@ -2058,36 +1913,7 @@
           "signer": true
         },
         {
-          "name": "asset_pool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "name": "asset_pool"
         },
         {
           "name": "grow_token_mint",
@@ -2253,36 +2079,7 @@
           "signer": true
         },
         {
-          "name": "asset_pool",
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "name": "asset_pool"
         },
         {
           "name": "junior_nft_mint",
@@ -2547,36 +2344,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -2706,36 +2474,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "senior_pool",
@@ -3550,36 +3289,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -3660,36 +3370,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "first_loss_pool",
@@ -3870,36 +3551,7 @@
         },
         {
           "name": "asset_pool",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  97,
-                  115,
-                  115,
-                  101,
-                  116,
-                  95,
-                  112,
-                  111,
-                  111,
-                  108
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.creator",
-                "account": "AssetPool"
-              },
-              {
-                "kind": "account",
-                "path": "asset_pool.name",
-                "account": "AssetPool"
-              }
-            ]
-          }
+          "writable": true
         },
         {
           "name": "subscription",
@@ -4624,9 +4276,9 @@
           {
             "name": "name",
             "docs": [
-              "资产池名称"
+              "资产池名称 (最多 64 字节)"
             ],
-            "type": "string"
+            "type": "bytes"
           },
           {
             "name": "status",
