@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/pencil_solana.json`.
  */
 export type PencilSolana = {
-  "address": "RXo7Ai9ugeBp9giAKqera2pg1xMj49exA5SgWdMBMuM",
+  "address": "G7XrbiCSkpBRyys2US19NLNf256Bm3BQ7okzDCWeuxzs",
   "metadata": {
     "name": "pencilSolana",
     "version": "0.1.0",
