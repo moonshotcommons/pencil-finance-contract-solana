@@ -279,12 +279,12 @@ pub struct InitializeRelatedAccounts<'info> {
     )]
     pub junior_nft_mint: Box<Account<'info, Mint>>,
 
-    /// 资产池 Token Vault ATA
+    /// 资产池 Token Vault（普通 TokenAccount，由 AssetPool PDA 持有）
     #[account(
         init,
         payer = payer,
-        associated_token::mint = asset_mint,
-        associated_token::authority = asset_pool
+        token::mint = asset_mint,
+        token::authority = asset_pool
     )]
     pub asset_pool_vault: Box<Account<'info, TokenAccount>>,
 

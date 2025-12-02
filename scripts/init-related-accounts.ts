@@ -127,23 +127,22 @@ async function main() {
     program.programId
   );
 
-  // 4. 关联账户 ATA
-  const assetPoolVault = await getAssociatedTokenAddress(
-    assetMint,
-    assetPool,
-    true
-  );
-
+  // 4. 关联账户
+  // 4.1 金库 ATA（用户钱包 -> Treasury 的 ATA，使用 ATA Program 创建）
   const treasuryAta = await getAssociatedTokenAddress(
     assetMint,
     treasury,
     false
   );
 
+  // 4.2 资产池 Vault：使用普通 TokenAccount，由 AssetPool PDA 作为 authority
+  const assetPoolVaultKeypair = anchor.web3.Keypair.generate();
+
   console.log("💾 AssetPool:", assetPool.toBase58());
   console.log("💰 Asset Mint:", assetMint.toBase58());
   console.log("📦 Funding:", funding.toBase58());
   console.log("🏦 Treasury ATA:", treasuryAta.toBase58());
+  console.log("🏦 Asset Pool Vault (new):", assetPoolVaultKeypair.publicKey.toBase58());
   console.log("" );
 
   // 5. 调用 initializeRelatedAccounts
@@ -160,7 +159,7 @@ async function main() {
       juniorInterestPool,
       growTokenMint,
       juniorNftMint,
-      assetPoolVault,
+      assetPoolVault: assetPoolVaultKeypair.publicKey,
       treasury,
       treasuryAta,
       tokenProgram: TOKEN_PROGRAM_ID,
@@ -168,6 +167,7 @@ async function main() {
       systemProgram: SystemProgram.programId,
       rent: anchor.web3.SYSVAR_RENT_PUBKEY,
     } as any)
+    .signers([assetPoolVaultKeypair])
     .rpc();
 
   console.log("✅ initialize_related_accounts 交易签名:", txSig);
